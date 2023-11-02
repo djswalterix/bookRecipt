@@ -21,11 +21,19 @@ const User = sequelize.define("User", {
   },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW, // Imposta il valore predefinito a data e ora correnti
+    defaultValue: DataTypes.NOW, // Set the default value to the current date and time
   },
   updatedAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW, // Imposta il valore predefinito a data e ora correnti
+    defaultValue: DataTypes.NOW, // Set the default value to the current date and time
   },
 });
+User.findByEmail = async (email) => {
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    return user;
+  } catch (error) {
+    throw new Error("Error while searching for the user by email.");
+  }
+};
 module.exports = User;

@@ -1,20 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/users.controller"); // Assicurati che il percorso sia corretto
+const userController = require("../controllers/users.controller");
 
-// Rotta per creare un nuovo utente
+// Route for creating a new user
 router.post("/", userController.createUser);
-/*
-// Rotta per ottenere tutti gli utenti
+
+// Route for getting all users
 router.get("/", userController.getAllUsers);
 
-// Rotta per ottenere un utente per e,ao;
+// Route for getting a user by email
 router.get("/:email", userController.getUserByEmail);
-
-// Rotta per aggiornare un utente per email
+// Route for updating a user by email
 router.put("/:email", userController.updateUser);
 
-// Rotta per eliminare un utente per email
+// Route for deleting a user by email
 router.delete("/:email", userController.deleteUser);
-*/
+
 module.exports = router;
