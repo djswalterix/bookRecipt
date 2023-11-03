@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const userRoutes = require("./routes/users.routes"); // Assicurati che il percorso sia corretto
+const booksRoutes = require("./routes/books.routes"); // Assicurati che il percorso sia corretto
 
 app.use(express.json());
 
@@ -8,6 +9,8 @@ app.use(express.json());
 
 // Utilizza il router per le rotte degli utenti
 app.use("/api/users", userRoutes);
+// Utilizza il router per le rotte degli utenti
+app.use("/api/books", booksRoutes);
 
 app.use((req, res, next) => {
   res.status(404).send("api not founded");

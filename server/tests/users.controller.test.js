@@ -106,7 +106,7 @@ describe("createUser", () => {
     // Ensure that the json function was called with the correct error message
     expect(
       res.json.calledWith(
-        sinon.match({ error: "Error while registering the user." })
+        sinon.match({ error: "Error while processing the request." })
       )
     ).to.be.true;
   });

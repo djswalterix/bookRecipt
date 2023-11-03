@@ -10,6 +10,12 @@ exports.createUser = async (req, res) => {
     if (!emailRegex.test(email)) {
       throw new Error("Email not provided correctly");
     }
+    // Validate password
+    if (!password || password.length < 8) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters." });
+    }
     // Hash the password (using bcrypt or argon2)
     const password_hash = await bcrypt.hash(password, 10);
 
@@ -23,16 +29,7 @@ exports.createUser = async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (error) {
-    if (error instanceof Sequelize.UniqueConstraintError) {
-      // If it's a unique constraint violation error (duplicate email)
-      res
-        .status(400)
-        .json({ error: "User with this email address already exists." });
-    } else {
-      // Otherwise, handle other errors as a server error
-      console.error(error);
-      res.status(500).json({ error: "Error while registering the user." });
-    }
+    handleErrors(error, res);
   }
 };
 // Function to get all users
@@ -41,8 +38,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await User.findAll();
     res.status(200).json(users);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Unable to retrieve users." });
+    handleErrors(error, res);
   }
 };
 
@@ -59,8 +55,7 @@ exports.getUserByEmail = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Unable to retrieve the user." });
+    handleErrors(error, res);
   }
 };
 // Function to update a user by email
@@ -92,8 +87,7 @@ exports.updateUser = async (req, res) => {
     const updatedUser = await user.save();
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Unable to update the user." });
+    handleErrors(error, res);
   }
 };
 // Function to delete a user by email
@@ -107,6 +101,17 @@ exports.deleteUser = async (req, res) => {
     const deletedUser = await user.destroy();
     res.status(200).json(deletedUser);
   } catch (error) {
-    res.status(500).json({ error: "Unable to delete the user." });
+    handleErrors(error, res);
+  }
+};
+// Centralized error handling function
+const handleErrors = (error, res) => {
+  if (error instanceof Sequelize.UniqueConstraintError) {
+    res
+      .status(400)
+      .json({ error: "User with this email address already exists." });
+  } else {
+    console.error(error);
+    res.status(500).json({ error: "Error while processing the request." });
   }
 };
