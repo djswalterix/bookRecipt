@@ -7,10 +7,11 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/users.controller"); // Replace with the correct path to your code file
-const testDb = require("../config/dbtest"); // Import the test database connection
+//const testDb = require("../config/dbtest"); // Import the test database connection
 const User = require("../models/users.model"); // Make sure the path is correct
 
 before(async () => {
+  // process.env.NODE_ENV = "test";
   // Delete all records from the User table
   await User.destroy({ where: {} });
 });

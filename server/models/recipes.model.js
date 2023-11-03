@@ -1,7 +1,7 @@
 const sequelize = require("../config/db");
 const { DataTypes } = require("sequelize");
-//const Recipe = require("./recipes.model");
-const Book = sequelize.define("Book", {
+
+const Recipe = sequelize.define("Recipe", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -15,10 +15,10 @@ const Book = sequelize.define("Book", {
     allowNull: false,
     unique: true,
   },
-  free: {
-    type: DataTypes.BOOLEAN,
+  directions: {
+    type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: false,
+    unique: true,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -38,5 +38,4 @@ const Book = sequelize.define("Book", {
     console.error("Error creating the table:", error);
   }
 })();
-
-module.exports = Book;
+module.exports = Recipe;

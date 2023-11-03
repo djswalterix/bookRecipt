@@ -1,6 +1,6 @@
 const sequelize = require("../config/db");
 const { DataTypes } = require("sequelize");
-
+//const Book = require("./books.model");
 const User = sequelize.define("User", {
   name: {
     type: DataTypes.STRING,
@@ -46,4 +46,5 @@ User.findByEmail = async (email) => {
     console.error("Error creating the table:", error);
   }
 })();
+
 module.exports = User;
