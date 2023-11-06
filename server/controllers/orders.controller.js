@@ -4,6 +4,7 @@ const { Sequelize } = require("sequelize");
 exports.createOrder = async (req, res) => {
   try {
     // Read data from order input (req.body)
+
     const { UserId, BookId, invoice } = req.body;
     console.log("UserId" + UserId);
     console.log("BookId" + BookId);
@@ -32,6 +33,7 @@ exports.getAllOrders = async (req, res) => {
 
 // Function to get a order by id
 exports.getOrderById = async (req, res) => {
+  console.log("r!!!!!!!!!!!!!!!!!eq.body:", req.params);
   console.log("find by id");
   try {
     const { id } = req.params;

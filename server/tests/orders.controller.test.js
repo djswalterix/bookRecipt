@@ -1,29 +1,70 @@
 const { expect } = require("chai");
 const sinon = require("sinon"); // Used for mocking dependencies
 const {
-  createBook,
-  getAllBooks,
-  getBookById,
-  updateBook,
-  deleteBook,
-} = require("../controllers/books.controller"); // Replace with the correct path to your code file
+  createOrder,
+  getAllOrders,
+  getOrderById,
+  updateOrder,
+  deleteOrder,
+} = require("../controllers/orders.controller"); // Replace with the correct path to your code file
 //const testDb = require("../config/dbtest"); // Import the test database connection
+const Order = require("../models/orders.model"); // Make sure the path is correct
+const User = require("../models/users.model"); // Make sure the path is correct
 const Book = require("../models/books.model"); // Make sure the path is correct
 
 before(async () => {
-  // Delete all records from the Book table
-  await Book.destroy({ where: {} });
+  // Delete all records from the Order table
+  await Order.destroy({ where: {} });
   //process.env.NODE_ENV = "test";
 });
-describe("createBook", () => {
-  it("should create a new book successfully", async () => {
+describe("createOrder", () => {
+  it("should create a new order successfully", async () => {
+    let bo = await Book.create({
+      name: "Johndssfsf",
+      image_path: "Ddfsdfoe",
+      description: "jn@fdsf.doexample.com",
+      free: "true",
+    });
+    let us = await User.create({
+      name: "Test",
+      surname: "User",
+      email: "teste.user@example.com",
+      password_hash: "testpassword",
+    });
+
     // Simulate input data
     const req = {
       body: {
-        name: "John",
-        image_path: "Doe",
-        description: "jn@.doexample.com",
-        free: "true",
+        UserId: us.id,
+        BookId: bo.id,
+        invoice: {
+          invoiceNumber: "INV2023-001",
+          invoiceDate: "2023-11-03",
+          dueDate: "2023-11-30",
+          customerName: "John Doe",
+          customerEmail: "john.doe@example.com",
+          items: [
+            {
+              description: "Prodotto A",
+              quantity: 2,
+              unitPrice: 20.0,
+            },
+            {
+              description: "Prodotto B",
+              quantity: 3,
+              unitPrice: 15.0,
+            },
+            {
+              description: "Prodotto C",
+              quantity: 1,
+              unitPrice: 30.0,
+            },
+          ],
+          subtotal: 120.0,
+          taxRate: 0.2,
+          taxAmount: 24.0,
+          total: 144.0,
+        },
       },
     };
 
@@ -32,18 +73,18 @@ describe("createBook", () => {
       json: sinon.spy(),
     };
 
-    // Call the createBook function
-    await createBook(req, res);
+    // Call the createOrder function
+    await createOrder(req, res);
 
     // Ensure that the status function was called with a status code of 201
     expect(res.status.calledWith(201)).to.be.true;
 
-    // Ensure that the json function was called with the data of the new book
+    // Ensure that the json function was called with the data of the new order
     expect(
       res.json.calledWith(
         sinon.match({
-          name: req.body.name,
-          surname: req.body.surname,
+          UserId: us.id,
+          BookId: bo.id,
         })
       )
     ).to.be.true;
@@ -62,9 +103,9 @@ describe("createBook", () => {
       json: sinon.stub(),
     };
 
-    // Call the createBook function with a generic error
+    // Call the createOrder function with a generic error
 
-    await createBook(req, res);
+    await createOrder(req, res);
 
     // Ensure that the status function was called with a status code of 500
     expect(res.status.calledWith(500)).to.be.true;
@@ -77,75 +118,216 @@ describe("createBook", () => {
     ).to.be.true;
   });
 });
-describe("getAllBooks", () => {
-  it("should return all books", async () => {
-    // Create a test book
-    await Book.create({
-      name: "Johsdfn",
-      image_path: "Ddsvoe",
-      description: "jn@dvsvd.doexample.com",
+describe("getAllOrders", async () => {
+  it("should return all orders", async () => {
+    let bo = await Book.create({
+      name: "getAllOrders",
+      image_path: "Ddfssssssssdsetstfoe",
+      description: "jn@ftdsf.doexample.com",
       free: "true",
+    });
+    let us = await User.create({
+      name: "getAllOrders",
+      surname: "User",
+      email: "tessssssssteeeee.user@example.com",
+      password_hash: "testpassword",
+    });
+    // Create a test order
+    await Order.create({
+      UserId: us.id,
+      BookId: bo.id,
+      invoice: {
+        invoiceNumber: "getAllOrders",
+        invoiceDate: "2023-11-03",
+        dueDate: "2023-11-30",
+        customerName: "John Doe",
+        customerEmail: "john.doe@example.com",
+        items: [
+          {
+            description: "Prodotto A",
+            quantity: 2,
+            unitPrice: 20.0,
+          },
+          {
+            description: "Prodotto B",
+            quantity: 3,
+            unitPrice: 15.0,
+          },
+          {
+            description: "Prodotto C",
+            quantity: 1,
+            unitPrice: 30.0,
+          },
+        ],
+        subtotal: 120.0,
+        taxRate: 0.2,
+        taxAmount: 24.0,
+        total: 144.0,
+      },
     });
     const req = {};
     const res = {
       status: sinon.stub().returnsThis(),
       json: sinon.stub(),
     };
-    await getAllBooks(req, res);
+    await getAllOrders(req, res);
     // Ensure that the status function was called with a status code of 200
     expect(res.status.calledWith(200)).to.be.true;
 
-    // Expect that the json function was called with an array of books
+    // Expect that the json function was called with an array of orders
     expect(res.json.calledWith(sinon.match.array)).to.be.true;
   });
 });
-describe("getBookById", () => {
-  it("should return 1 book", async () => {
-    // Create a test book
-    let booktest = await Book.create({
-      name: "ffJohn",
-      image_path: "Doeff",
-      description: "jn@.doffexample.com",
-      free: "false",
+describe("getOrderById", async () => {
+  it("should return 1 order", async () => {
+    let us = await User.create({
+      name: "getOrderById",
+      surname: "User",
+      email: "getOrderById.user@example.com",
+      password_hash: "testpassword",
+    });
+    let bo = await Book.create({
+      name: "getOrderById",
+      image_path: "getOrderByIdsdsd",
+      description: "jn@getOrderById.doexample.com",
+      free: "true",
+    });
+    // Create a test order
+    let ordertest = await Order.create({
+      UserId: us.id,
+      BookId: bo.id,
+      invoice: {
+        invoiceNumber: "getOrderById",
+        invoiceDate: "2023-11-03",
+        dueDate: "2023-11-30",
+        customerName: "John Doe",
+        customerEmail: "john.doe@example.com",
+        items: [
+          {
+            description: "Prodotto A",
+            quantity: 2,
+            unitPrice: 20.0,
+          },
+          {
+            description: "Prodotto B",
+            quantity: 3,
+            unitPrice: 15.0,
+          },
+          {
+            description: "Prodotto C",
+            quantity: 1,
+            unitPrice: 30.0,
+          },
+        ],
+        subtotal: 120.0,
+        taxRate: 0.2,
+        taxAmount: 24.0,
+        total: 144.0,
+      },
     });
     const req = {
       params: {
-        id: booktest.id,
+        id: ordertest.id,
       },
     };
     const res = {
       status: sinon.stub().returnsThis(),
       json: sinon.stub(),
     };
-    await getBookById(req, res);
+    await getOrderById(req, res);
     // Ensure that the status function was called with a status code of 200
     expect(res.status.calledWith(200)).to.be.true;
-    const returnedBook = res.json.getCall(0).args[0];
+    const returnedOrder = res.json.getCall(0).args[0];
 
-    //ensure is the same book we created before
-    expect(returnedBook.name).to.equal(booktest.name);
-    expect(returnedBook.image_path).to.equal(booktest.image_path);
-    expect(returnedBook.description).to.equal(booktest.description);
+    //ensure is the same order we created before
+    expect(returnedOrder.name).to.equal(ordertest.name);
+    expect(returnedOrder.image_path).to.equal(ordertest.image_path);
+    expect(returnedOrder.description).to.equal(ordertest.description);
   });
 });
 
-describe("updateBook", () => {
-  it("should update a an book successfully", async () => {
-    let booktest = await Book.create({
-      name: "Johndfsf",
-      image_path: "Ddfsdfoe",
-      description: "jn@fdsf.doexample.com",
+describe("updateOrder", async () => {
+  it("should update a an order successfully", async () => {
+    // Create a test order
+    let us = await User.create({
+      name: "updateOrder",
+      surname: "User",
+      email: "updateOrder.user@example.com",
+      password_hash: "testpassword",
+    });
+    let bo = await Book.create({
+      name: "updateOrder",
+      image_path: "updateOrder",
+      description: "jn@updateOrder.doexample.com",
       free: "true",
+    });
+    // Create a test order
+    let ordertest = await Order.create({
+      UserId: us.id,
+      BookId: bo.id,
+      invoice: {
+        invoiceNumber: "updateOrder-001",
+        invoiceDate: "2023-11-03",
+        dueDate: "2023-11-30",
+        customerName: "John Doe",
+        customerEmail: "johsn.doe@example.com",
+        items: [
+          {
+            description: "Prodotto A",
+            quantity: 2,
+            unitPrice: 20.0,
+          },
+          {
+            description: "Prodotto B",
+            quantity: 3,
+            unitPrice: 15.0,
+          },
+          {
+            description: "Prodotto C",
+            quantity: 1,
+            unitPrice: 30.0,
+          },
+        ],
+        subtotal: 120.0,
+        taxRate: 0.2,
+        taxAmount: 24.0,
+        total: 144.0,
+      },
     });
     // Simulate input data
     const req = {
       params: {
-        id: booktest.id,
+        id: ordertest.id,
       },
       body: {
-        name: "NameUpdated",
-        description: "DescupdUpdated",
-        free: "false",
+        invoice: {
+          invoiceNumber: "updateteeeeeeeeeeeeeeeeeeOrder-001",
+          invoiceDate: "2023-11-03",
+          dueDate: "2023-11-30",
+          customerName: "John Doe",
+          customerEmail: "johsn.doe@example.com",
+          items: [
+            {
+              description: "Prodotto A",
+              quantity: 2,
+              unitPrice: 20.0,
+            },
+            {
+              description: "Prodotto B",
+              quantity: 3,
+              unitPrice: 15.0,
+            },
+            {
+              description: "Prodotto C",
+              quantity: 1,
+              unitPrice: 30.0,
+            },
+          ],
+          subtotal: 120.0,
+          taxRate: 0.2,
+          taxAmount: 24.0,
+          total: 144.0,
+        },
       },
     };
 
@@ -154,14 +336,14 @@ describe("updateBook", () => {
       json: sinon.spy(),
     };
 
-    // Call the updateBook function
-    const updBook = await updateBook(req, res);
+    // Call the updateOrder function
+    const updOrder = await updateOrder(req, res);
 
     // Ensure that the status function was called with a status code of 200
     expect(res.status.calledWith(200)).to.be.true;
     console.log(req.body);
 
-    // Ensure that the json function was called with the data of the upd book
+    // Ensure that the json function was called with the data of the upd order
     expect(
       res.json.calledWith(
         sinon.match({
@@ -173,18 +355,59 @@ describe("updateBook", () => {
   });
 });
 
-describe("deleteBook", () => {
-  it("should create a new book successfully", async () => {
-    let booktest = await Book.create({
-      name: "Johndfsf",
-      image_path: "Ddfsdfoe",
-      description: "jn@fdsf.doexample.com",
-      free: "true",
+describe("deleteOrder", async () => {
+  it("should create a new order successfully", async () => {
+    // Create a test order
+    let us = await User.create({
+      name: "deleteOrder",
+      surname: "User",
+      email: "deleteOrder.user@example.com",
+      password_hash: "testpassword",
+    });
+
+    let bo = await Book.create({
+      name: "deleteOrder",
+      image_path: "deleteOrder",
+      description: "jndeleteOrder.doexample.com",
+      free: true,
+    });
+    // Create a test order
+    let ordertest = await Order.create({
+      UserId: us.id,
+      BookId: bo.id,
+      invoice: {
+        invoiceNumber: "deleteOrder-001",
+        invoiceDate: "2023-11-03",
+        dueDate: "2023-11-30",
+        customerName: "John Doe",
+        customerEmail: "johsn.doe@example.com",
+        items: [
+          {
+            description: "Prodotto A",
+            quantity: 2,
+            unitPrice: 20.0,
+          },
+          {
+            description: "Prodotto B",
+            quantity: 3,
+            unitPrice: 15.0,
+          },
+          {
+            description: "Prodotto C",
+            quantity: 1,
+            unitPrice: 30.0,
+          },
+        ],
+        subtotal: 120.0,
+        taxRate: 0.2,
+        taxAmount: 24.0,
+        total: 144.0,
+      },
     });
     // Simulate input data
     const req = {
       params: {
-        id: booktest.id,
+        id: ordertest.id,
       },
     };
 
@@ -193,25 +416,24 @@ describe("deleteBook", () => {
       json: sinon.spy(),
     };
 
-    // Call the updateBook function
-    await deleteBook(req, res);
+    // Call the updateOrder function
+    await deleteOrder(req, res);
 
     // Ensure that the status function was called with a status code of 200
     expect(res.status.calledWith(200)).to.be.true;
-    const foundBook = await Book.findByPk(booktest.id);
+    const foundOrder = await Order.findByPk(ordertest.id);
 
-    // Ensure that the json function was called with the data of the upd book
+    // Ensure that the json function was called with the data of the upd order
     expect(
       res.json.calledWith(
         sinon.match({
-          name: booktest.name,
-          description: booktest.description,
-          id: booktest.id,
+          UserId: ordertest.UserId,
+          OrderId: ordertest.OrderId,
         })
       )
     ).to.be.true;
 
-    //ensure the book don't exist more
-    expect(foundBook).to.be.null;
+    //ensure the order don't exist more
+    expect(foundOrder).to.be.null;
   });
 });
