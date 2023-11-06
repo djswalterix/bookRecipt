@@ -1,23 +1,24 @@
 const sequelize = require("../config/db");
 const { DataTypes } = require("sequelize");
-//const Book = require("./books.model");
-const User = sequelize.define("User", {
+
+const Recipe = sequelize.define("Recipe", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  surname: {
+  image_path: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  email: {
+  description: {
     type: DataTypes.STRING,
-    aallowNull: false,
+    allowNull: false,
     unique: true,
   },
-  password_hash: {
+  directions: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -28,15 +29,6 @@ const User = sequelize.define("User", {
     defaultValue: DataTypes.NOW, // Set the default value to the current date and time
   },
 });
-User.findByEmail = async (email) => {
-  try {
-    const user = await User.findOne({ where: { email: email } });
-    return user;
-  } catch (error) {
-    throw new Error("Error while searching for the user by email.");
-  }
-};
-
 // Synchronize the model with the database
 (async () => {
   try {
@@ -46,5 +38,4 @@ User.findByEmail = async (email) => {
     console.error("Error creating the table:", error);
   }
 })();
-
-module.exports = User;
+module.exports = Recipe;
