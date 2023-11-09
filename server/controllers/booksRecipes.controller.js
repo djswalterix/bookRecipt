@@ -12,7 +12,7 @@ exports.createBookRecipe = async (req, res) => {
     );
     console.log("RecipeId" + RecipeId);
     if (!BookId || !RecipeId) {
-      throw error;
+      throw new Error("BookId and RecipeId must be provided.");
     }
     // Create a new bookRecipe in the database
     const newBookRecipe = await BookRecipe.create({
