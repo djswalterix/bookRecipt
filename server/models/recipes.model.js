@@ -13,12 +13,10 @@ const Recipe = sequelize.define("Recipe", {
   description: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   directions: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   createdAt: {
     type: DataTypes.DATE,

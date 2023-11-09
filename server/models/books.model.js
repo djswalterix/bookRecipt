@@ -8,7 +8,6 @@ const Book = sequelize.define("Book", {
   },
   image_path: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   description: {
     type: DataTypes.STRING,
@@ -17,7 +16,6 @@ const Book = sequelize.define("Book", {
   },
   free: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: false,
   },
   createdAt: {
