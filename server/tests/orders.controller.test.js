@@ -19,12 +19,6 @@ before(async () => {
 });
 describe("createOrder", () => {
   it("should create a new order successfully", async () => {
-    let bo = await Book.create({
-      name: "Johndssfsf",
-      image_path: "Ddfsdfoe",
-      description: "jn@fdsf.doexample.com",
-      free: "true",
-    });
     let us = await User.create({
       name: "Test",
       surname: "User",
@@ -32,6 +26,12 @@ describe("createOrder", () => {
       password_hash: "testpassword",
     });
 
+    let bo = await Book.create({
+      name: "createOrder",
+      image_path: "getOrderByIdsdsd",
+      description: "jn@getOrderById.doexample.com",
+      free: "true",
+    });
     // Simulate input data
     const req = {
       body: {
@@ -122,8 +122,8 @@ describe("getAllOrders", async () => {
   it("should return all orders", async () => {
     let bo = await Book.create({
       name: "getAllOrders",
-      image_path: "Ddfssssssssdsetstfoe",
-      description: "jn@ftdsf.doexample.com",
+      image_path: "updateOrder",
+      description: "jn@updateOrder.doexample.com",
       free: "true",
     });
     let us = await User.create({
@@ -187,9 +187,9 @@ describe("getOrderById", async () => {
       password_hash: "testpassword",
     });
     let bo = await Book.create({
-      name: "getOrderById",
-      image_path: "getOrderByIdsdsd",
-      description: "jn@getOrderById.doexample.com",
+      name: "getOrderByIdbooks",
+      image_path: "updateOrder1",
+      description: "jn@updat1eOrder.doexample.com",
       free: "true",
     });
     // Create a test order
@@ -256,9 +256,9 @@ describe("updateOrder", async () => {
       password_hash: "testpassword",
     });
     let bo = await Book.create({
-      name: "updateOrder",
-      image_path: "updateOrder",
-      description: "jn@updateOrder.doexample.com",
+      name: "updateOrderbook",
+      image_path: "upda",
+      description: "jner.doexample.com",
       free: "true",
     });
     // Create a test order
