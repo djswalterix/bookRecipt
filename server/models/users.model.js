@@ -49,7 +49,14 @@ User.findByEmail = async (email) => {
     throw new Error("Error while searching for the user by email.");
   }
 };
-
+User.findPkbyEmail = async (email) => {
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    return user.id;
+  } catch (error) {
+    throw new Error("Error while searching for the user by email.");
+  }
+};
 // Synchronize the model with the database
 (async () => {
   try {

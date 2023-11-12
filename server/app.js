@@ -12,16 +12,6 @@ const session = require("express-session");
 const authRoutes = require("./routes/auth.routes");
 app.use(express.json());
 
-app.use(
-  session({
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Altri middleware e configurazioni
 app.use("/api/auth", authRoutes);
 
