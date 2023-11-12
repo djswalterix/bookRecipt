@@ -1,5 +1,6 @@
 const sequelize = require("../config/db");
 const { DataTypes } = require("sequelize");
+const bcrypt = require("bcrypt");
 //const Book = require("./books.model");
 const User = sequelize.define("User", {
   name: {
@@ -12,7 +13,7 @@ const User = sequelize.define("User", {
   },
   email: {
     type: DataTypes.STRING,
-    aallowNull: false,
+    allowNull: false,
     unique: true,
   },
   password_hash: {
@@ -28,6 +29,18 @@ const User = sequelize.define("User", {
     defaultValue: DataTypes.NOW, // Set the default value to the current date and time
   },
 });
+// Metodo per hashare la password prima di salvarla nel database
+User.beforeCreate(async (user) => {
+  if (user.password_hash) {
+    const saltRounds = 10;
+    user.password_hash = await bcrypt.hash(user.password_hash, saltRounds);
+  }
+});
+
+// Metodo per validare la password
+User.prototype.validatePassword = async function (password) {
+  return await bcrypt.compare(password, this.password_hash);
+};
 User.findByEmail = async (email) => {
   try {
     const user = await User.findOne({ where: { email: email } });
@@ -36,7 +49,14 @@ User.findByEmail = async (email) => {
     throw new Error("Error while searching for the user by email.");
   }
 };
-
+User.findPkbyEmail = async (email) => {
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    return user.id;
+  } catch (error) {
+    throw new Error("Error while searching for the user by email.");
+  }
+};
 // Synchronize the model with the database
 (async () => {
   try {

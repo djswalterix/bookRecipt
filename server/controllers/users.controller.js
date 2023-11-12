@@ -1,5 +1,5 @@
 const User = require("../models/users.model"); // Import User Model
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
 const { Sequelize } = require("sequelize");
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
@@ -17,7 +17,8 @@ exports.createUser = async (req, res) => {
         .json({ error: "Password must be at least 8 characters." });
     }
     // Hash the password (using bcrypt or argon2)
-    const password_hash = await bcrypt.hash(password, 10);
+    // const password_hash = await bcrypt.hash(password, 10);
+    const password_hash = password;
 
     // Create a new user in the database
     const newUser = await User.create({

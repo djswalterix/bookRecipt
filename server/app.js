@@ -7,10 +7,13 @@ const ingredientsRoutes = require("./routes/ingredients.routes"); // Assicurati 
 const ordersRoutes = require("./routes/orders.routes"); // Assicurati che il percorso sia corretto
 const booksRecipesRoutes = require("./routes/booksRecipes.routes"); // Assicurati che il percorso sia corretto
 const recipesIngredientsRoutes = require("./routes/recipesIngredients.routes"); // Assicurati che il percorso sia corretto
-
+const passport = require("./auth/passport");
+const session = require("express-session");
+const authRoutes = require("./routes/auth.routes");
 app.use(express.json());
 
 // Altri middleware e configurazioni
+app.use("/api/auth", authRoutes);
 
 // Utilizza il router per le rotte degli utenti
 app.use("/api/users", userRoutes);
