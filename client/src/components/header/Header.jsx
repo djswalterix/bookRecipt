@@ -1,57 +1,120 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import style from "../../css/Header.module.scss"; // Assicurati che il percorso sia corretto
-import "bootstrap/dist/js/bootstrap.bundle.min";
-import { Link } from "react-router-dom"; // Assicurati di avere installato react-router-dom se stai utilizzando React Router
-import LoginButton from "./LoginButton";
-const Header = () => {
-  return (
-    <nav className={`navbar navbar-expand-lg bg-body-tertiary ${style.header}`}>
-      <div className="container-fluid">
-        <Link className="navbar-brand" to="#">
-          RicettarioSmart
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse " id="navbarNav">
-          <ul className={`navbar-nav ${style.nav}`}>
-            <li className="nav-item">
-              <Link className="nav-link active" aria-current="page" to="#">
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="#">
-                Ricettario
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="#">
-                Profilo
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="#">
-                Preferiti
-              </Link>
-            </li>
-          </ul>
-          <div className="ml-auto">
-            <LoginButton isLoggedIn={true} />
-          </div>
-        </div>
-      </div>
-    </nav>
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
+import {
+  logout,
+  setUserLoggedIn,
+} from "../../redux/reducers/authSlice.reducer";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import Drawer from "@mui/material/Drawer";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useNavigate } from "react-router-dom";
+
+function Header() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token"); // Rimuovere il token
+    dispatch(setUserLoggedIn(false)); // Aggiornare lo stato di Redux
+    navigate("/sign-in"); // Reindirizza alla pagina di login o alla home
+  };
+
+  const drawer = (
+    <div onClick={() => setDrawerOpen(false)}>
+      <Button
+        color="inherit"
+        component={RouterLink}
+        to="/"
+        sx={{ display: "block" }}
+      >
+        Home
+      </Button>
+      <Button
+        color="inherit"
+        component={RouterLink}
+        to="/chi-siamo"
+        sx={{ display: "block" }}
+      >
+        Chi Siamo
+      </Button>
+      {isAuthenticated ? (
+        <Button color="inherit" onClick={handleLogout}>
+          Logout
+        </Button>
+      ) : (
+        <>
+          <Button
+            color="inherit"
+            component={RouterLink}
+            to="/sign-in"
+            sx={{ display: "block" }}
+          >
+            Sign In
+          </Button>
+        </>
+      )}
+    </div>
   );
-};
+
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        {isMobile && (
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={() => setDrawerOpen(true)}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
+        <Drawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+        >
+          {drawer}
+        </Drawer>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          RicettarioSmart
+        </Typography>
+        {!isMobile && (
+          <div>
+            <Button color="inherit" component={RouterLink} to="/">
+              Home
+            </Button>
+            <Button color="inherit" component={RouterLink} to="/chi-siamo">
+              Chi Siamo
+            </Button>
+            {isAuthenticated ? (
+              <Button color="inherit" onClick={handleLogout}>
+                Logout
+              </Button>
+            ) : (
+              <>
+                <Button color="inherit" component={RouterLink} to="/sign-in">
+                  Sign In
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
+}
 
 export default Header;

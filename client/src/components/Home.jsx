@@ -5,7 +5,7 @@ import Header from "./header/Header";
 const Home = () => {
   return (
     <div>
-      <Header isAuthenticated={false} onLogout={() => {}} />
+      <Header />
       <div style={{ padding: "20px", textAlign: "center" }}>
         <h2>Contenuto della Home</h2>
         <p>Aggiungi qui il contenuto della tua home page.</p>

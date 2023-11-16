@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node app.js",
     "test": "set NODE_ENV=test && mocha  tests/**/*.test.js"
   },
   "keywords": [],
