@@ -16,6 +16,7 @@ export const login = createAsyncThunk(
     }
   }
 );
+
 const authSlice = createSlice({
   name: "auth",
   initialState,

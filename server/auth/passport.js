@@ -23,6 +23,7 @@ passport.use(
           return done(null, false, { message: "Incorrect password." });
         }
         console.log("correct");
+
         return done(null, user);
       } catch (error) {
         return done(error);

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,7 +14,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { login, setUserLoggedIn } from "../../redux/reducers/authSlice.reducer";
 import { useNavigate } from "react-router-dom";
-
+import CircularProgress from "@mui/material/CircularProgress";
 import { useSelector, useDispatch } from "react-redux";
 function Copyright(props) {
   return (
@@ -39,6 +39,8 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const [errorMessage, setErrorMessage] = useState(""); // Aggiungi uno stato per il messaggio di errore
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -51,9 +53,17 @@ export default function SignIn() {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const email = data.get("email");
+    const password = data.get("password");
+    if (!email.includes("@") || password.length < 6) {
+      setErrorMessage("Email o password non validi");
+
+      return;
+    }
+    console.log(email);
     dispatch(
       login({
         email: data.get("email"),
@@ -65,10 +75,12 @@ export default function SignIn() {
           localStorage.setItem("token", response.payload.token); // Salvare il token
           dispatch(setUserLoggedIn(true)); // Aggiornare lo stato di Redux
           // Altre azioni post-login
+        } else {
+          throw new Error("errore durante il login");
         }
       })
       .catch((error) => {
-        // Gestire l'errore
+        setErrorMessage("Errore durante il login"); // Gestione degli errori
       });
   };
 
@@ -84,12 +96,16 @@ export default function SignIn() {
             alignItems: "center",
           }}
         >
+          {errorMessage && (
+            <Typography color="error">{errorMessage}</Typography>
+          )}
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Accedi
           </Typography>
+          {loading && <CircularProgress />}
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -135,7 +151,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/registration" variant="body2">
                   {"Non hai un account? Registrati"}
                 </Link>
               </Grid>

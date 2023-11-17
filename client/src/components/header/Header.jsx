@@ -50,7 +50,7 @@ function Header() {
       </Button>
       {isAuthenticated ? (
         <Button color="inherit" onClick={handleLogout}>
-          Logout
+          Esci
         </Button>
       ) : (
         <>
@@ -60,7 +60,7 @@ function Header() {
             to="/sign-in"
             sx={{ display: "block" }}
           >
-            Sign In
+            Accedi
           </Button>
         </>
       )}
