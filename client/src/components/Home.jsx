@@ -1,15 +1,17 @@
 // Home.js
 import React from "react";
 import Header from "./header/Header";
+import ResponsiveImage from "./ResponsiveImage";
 
 const Home = () => {
   return (
     <div>
       <Header />
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        <h2>Contenuto della Home</h2>
-        <p>Aggiungi qui il contenuto della tua home page.</p>
-      </div>
+      <ResponsiveImage
+        desktopImage="/images/DesktopBanner.png"
+        mobileImage="/images/MobileBanner.png"
+      />
+      <div style={{ padding: "20px", textAlign: "center" }}></div>
     </div>
   );
 };
