@@ -16,4 +16,11 @@ router.put("/:id", verifyToken, ingredientController.updateIngredient);
 // Route for deleting a ingredient by id
 router.delete("/:id", verifyToken, ingredientController.deleteIngredient);
 
+//route for getting ingredients by recipe
+router.get(
+  "/byrecipeid/:id",
+  verifyToken,
+  ingredientController.getIngredientsByRecipeId
+);
+
 module.exports = router;

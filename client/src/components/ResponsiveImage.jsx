@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
 import {
   useTheme,
   useMediaQuery,
@@ -60,7 +60,12 @@ const ResponsiveImage = ({ desktopImage, mobileImage }) => {
           Scopri ricette deliziose e facili da preparare!
         </Typography>
         {/* Bottone */}
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/reciper"
+        >
           Esplora Ricette
         </Button>
       </Box>
