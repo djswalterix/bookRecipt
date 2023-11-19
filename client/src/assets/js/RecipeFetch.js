@@ -12,6 +12,7 @@ const fetchRecipt = async () => {
 };
 
 const fetchIngredientsByRecipe = async (id) => {
+  console.log(`/api/ingredients/byrecipeid/${id}`);
   const token = localStorage.getItem("token");
   const response = await axios.get(`/api/ingredients/byrecipeid/${id}`, {
     headers: {
@@ -19,6 +20,7 @@ const fetchIngredientsByRecipe = async (id) => {
       Authorization: `Bearer ${token}`,
     },
   });
+  console.log(response.data);
   return response.data;
 };
 export { fetchRecipt, fetchIngredientsByRecipe };

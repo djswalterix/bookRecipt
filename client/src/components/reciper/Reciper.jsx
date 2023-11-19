@@ -49,7 +49,7 @@ const Ricettario = () => {
         aria-label="open drawer"
         edge="start"
         onClick={handleDrawerToggle}
-        sx={{ mr: 2, display: { sm: "none" } }} // Nasconde il pulsante su schermi più grandi di 'sm'
+        sx={{ mr: 2, display: { md: "none", sm: "block" } }} // Nasconde il pulsante su schermi più grandi di 'sm'
       >
         <MenuIcon />
       </IconButton>
