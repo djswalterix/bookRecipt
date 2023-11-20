@@ -128,9 +128,6 @@ exports.getIngredientsByRecipeId = async (req, res) => {
     const ingredients = recipe.Ingredients;
     res.status(200).json(ingredients);
   } catch (error) {
-    console.error("Error fetching ingredients by recipe id", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching ingredients." });
+    handleErrors(error, res);
   }
 };

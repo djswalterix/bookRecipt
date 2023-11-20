@@ -7,6 +7,12 @@ router.post("/", verifyToken, recipeController.createRecipe);
 
 // Route for getting all recipes
 router.get("/", verifyToken, recipeController.getAllRecipes);
+// Route for getting all recipes and ingredients
+router.get(
+  "/ingredients/",
+  verifyToken,
+  recipeController.getRecipesAndIngredients
+);
 
 // Route for getting a recipe by id
 router.get("/:id", verifyToken, recipeController.getRecipeById);

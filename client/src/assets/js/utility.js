@@ -7,13 +7,17 @@ const macrocalc = (ingredients) => {
   };
   ingredients.forEach((ingredient) => {
     macros.calories +=
-      ingredient.calories * ingredient.RecipeIngredient.quantity;
+      (ingredient.calories * ingredient.RecipeIngredient.quantity) / 100;
 
-    macros.fat += ingredient.fat * ingredient.RecipeIngredient.quantity;
-    macros.protein += ingredient.protein * ingredient.RecipeIngredient.quantity;
+    macros.fat += (ingredient.fat * ingredient.RecipeIngredient.quantity) / 100;
+    macros.protein +=
+      (ingredient.protein * ingredient.RecipeIngredient.quantity) / 100;
     macros.carbohydrates +=
-      ingredient.carbohydrates * ingredient.RecipeIngredient.quantity;
+      (ingredient.carbohydrates * ingredient.RecipeIngredient.quantity) / 100;
   });
+  for (let key in macros) {
+    macros[key] = macros[key].toFixed(2);
+  }
 
   return macros;
 };

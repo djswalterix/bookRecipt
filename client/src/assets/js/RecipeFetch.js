@@ -23,4 +23,16 @@ const fetchIngredientsByRecipe = async (id) => {
   console.log(response.data);
   return response.data;
 };
-export { fetchRecipt, fetchIngredientsByRecipe };
+
+const fetchReciptAndIngredients = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get("/api/recipes/ingredients/", {
+    headers: {
+      // Inserisci qui il tuo header di autenticazione, se necessario
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export { fetchRecipt, fetchIngredientsByRecipe, fetchReciptAndIngredients };
