@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchIngredientsByRecipe } from "../../assets/js/RecipeFetch";
+//import { fetchIngredientsByRecipe } from "../../assets/js/RecipeFetch";
 import {
   Card,
   CardContent,
@@ -20,22 +20,15 @@ import {
 import { macrocalc } from "../../assets/js/utility";
 
 const Recipe = ({ ricetta }) => {
-  const [ingredients, setIngredients] = useState([]);
+  console.log(ricetta);
+  //const [ricetta.Ingredients, setricetta.Ingredients] = useState([]);
   const [macros, setMacros] = useState([]);
   const theme = useTheme();
 
   useEffect(() => {
     if (ricetta) {
-      const loadIngredients = async () => {
-        console.log(ricetta.id);
-        const ingredientsLoaded = await fetchIngredientsByRecipe(ricetta.id);
-        console.log("ingredients " + ingredientsLoaded);
-        setIngredients(ingredientsLoaded);
-        const macrosLoaded = macrocalc(ingredientsLoaded);
-        setMacros(macrosLoaded);
-      };
-
-      loadIngredients();
+      const macrosLoaded = macrocalc(ricetta.Ingredients);
+      setMacros(macrosLoaded);
     }
   }, [ricetta]);
 
@@ -81,7 +74,7 @@ const Recipe = ({ ricetta }) => {
         >
           <Box sx={{ mb: 2 }}>
             <Typography variant="h6">Ingredienti:</Typography>
-            {ingredients.map((ingredient, index) => (
+            {ricetta.Ingredients.map((ingredient, index) => (
               <Chip
                 key={index}
                 label={`${ingredient.name}: ${ingredient.RecipeIngredient.quantity} gr`}

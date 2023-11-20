@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  fetchRecipt,
-  fetchReciptAndIngredients,
-} from "../../assets/js/RecipeFetch";
+//import { fetchReciptAndIngredients } from "../../assets/js/RecipeFetch";
+import { fetchReciptAndIngredients } from "../../redux/actions/recipesActions";
 import {
   Box,
   Drawer,
@@ -19,10 +17,12 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import Recipe from "./Recipe";
+import { useDispatch, useSelector } from "react-redux";
 const drawerWidth = 240;
 
 const Ricettario = () => {
-  const [ricette, setRicette] = useState([]);
+  const dispatch = useDispatch();
+  const ricetteDalStore = useSelector((state) => state.recipes.data);
   const [ricettaSelezionata, setRicettaSelezionata] = useState(null);
   const [ricetteFiltrate, setRicetteFiltrate] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,21 +32,16 @@ const Ricettario = () => {
 
   // Caricamento delle ricette dal backend
   useEffect(() => {
-    const loadRicette = async () => {
-      const ricetteCaricate = await fetchReciptAndIngredients();
-      setRicette(ricetteCaricate);
-      setRicetteFiltrate(ricetteCaricate);
-    };
+    dispatch(fetchReciptAndIngredients());
+  }, [dispatch]);
 
-    loadRicette();
-  }, []);
   useEffect(() => {
+    // Filtrazione basata sullo stato delle ricette recuperate dal Redux store
     if (searchQuery) {
       const searchTerms = searchQuery
         .split(",")
         .map((term) => term.trim().toLowerCase());
-
-      const filtered = ricette.filter((ricetta) =>
+      const filtered = ricetteDalStore.filter((ricetta) =>
         searchTerms.some(
           (term) =>
             term === "" ||
@@ -59,9 +54,9 @@ const Ricettario = () => {
       );
       setRicetteFiltrate(filtered);
     } else {
-      setRicetteFiltrate(ricette); // Se non c'è testo di ricerca, mostra tutte le ricette
+      setRicetteFiltrate(ricetteDalStore);
     }
-  }, [searchQuery, ricette]);
+  }, [searchQuery, ricetteDalStore]);
 
   const selezionaRicetta = (ricetta) => {
     setRicettaSelezionata(ricetta);

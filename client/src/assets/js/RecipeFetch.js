@@ -1,5 +1,5 @@
 import axios from "axios";
-
+/*
 const fetchRecipt = async () => {
   const token = localStorage.getItem("token");
   const response = await axios.get("/api/recipes", {
@@ -9,7 +9,7 @@ const fetchRecipt = async () => {
     },
   });
   return response.data;
-};
+};*/
 
 const fetchIngredientsByRecipe = async (id) => {
   console.log(`/api/ingredients/byrecipeid/${id}`);
@@ -35,4 +35,4 @@ const fetchReciptAndIngredients = async () => {
   return response.data;
 };
 
-export { fetchRecipt, fetchIngredientsByRecipe, fetchReciptAndIngredients };
+export { /*fetchRecipt,*/ fetchIngredientsByRecipe, fetchReciptAndIngredients };

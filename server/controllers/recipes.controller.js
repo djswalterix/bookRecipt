@@ -111,7 +111,7 @@ exports.getRecipesAndIngredients = async (req, res) => {
           model: Ingredient,
           as: "Ingredients",
           through: {
-            attributes: [],
+            attributes: ["quantity"],
           },
         },
       ],
