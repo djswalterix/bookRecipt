@@ -11,8 +11,11 @@ const RecipeIngredient = sequelize.define("RecipeIngredient", {
   },
 });
 
-Recipe.belongsToMany(Ingredient, { through: RecipeIngredient });
-Ingredient.belongsToMany(Recipe, { through: RecipeIngredient });
+Recipe.belongsToMany(Ingredient, {
+  through: RecipeIngredient,
+  as: "Ingredients",
+});
+Ingredient.belongsToMany(Recipe, { through: RecipeIngredient, as: "Recipes" });
 // Synchronize the model with the database
 (async () => {
   try {

@@ -28,6 +28,14 @@ const User = sequelize.define("User", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW, // Set the default value to the current date and time
   },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: "user", // Imposta 'user' come valore predefinito
+    validate: {
+      isIn: [["user", "admin"]], // Assicurati che il ruolo sia uno di quelli ammessi
+    },
+  },
 });
 // Metodo per hashare la password prima di salvarla nel database
 User.beforeCreate(async (user) => {

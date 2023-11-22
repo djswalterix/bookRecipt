@@ -1,6 +1,6 @@
 const Recipe = require("../models/recipes.model"); // Import Recipe Model
 const { Sequelize } = require("sequelize");
-
+const Ingredient = require("../models/ingredients.model");
 exports.createRecipe = async (req, res) => {
   try {
     // Read data from recipe input (req.body)
@@ -99,5 +99,26 @@ const handleErrors = (error, res) => {
   } else {
     console.error(error);
     res.status(500).json({ error: "Error while processing the request." });
+  }
+};
+
+exports.getRecipesAndIngredients = async (req, res) => {
+  try {
+    console.log("recipes and ingredients");
+    let recipes = await Recipe.findAll({
+      include: [
+        {
+          model: Ingredient,
+          as: "Ingredients",
+          through: {
+            attributes: ["quantity"],
+          },
+        },
+      ],
+    });
+
+    res.status(200).json(recipes);
+  } catch (error) {
+    handleErrors(error, res);
   }
 };

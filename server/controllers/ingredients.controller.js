@@ -1,6 +1,6 @@
 const Ingredient = require("../models/ingredients.model"); // Import Ingredient Model
 const { Sequelize } = require("sequelize");
-
+const Recipe = require("../models/recipes.model");
 exports.createIngredient = async (req, res) => {
   try {
     // Read data from ingredient input (req.body)
@@ -102,5 +102,32 @@ const handleErrors = (error, res) => {
   } else {
     console.error(error);
     res.status(500).json({ error: "Error while processing the request." });
+  }
+};
+
+exports.getIngredientsByRecipeId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const recipe = await Recipe.findByPk(id, {
+      include: [
+        {
+          model: Ingredient,
+          as: "Ingredients", // Usa l'alias che hai definito nell'associazione
+          through: {
+            attributes: ["quantity"], // Non restituire attributi dalla tabella di join
+          },
+        },
+      ],
+    });
+
+    if (!recipe) {
+      return res.status(404).json({ error: "Recipe not found." });
+    }
+
+    // Ora puoi accedere agli ingredienti attraverso l'alias definito
+    const ingredients = recipe.Ingredients;
+    res.status(200).json(ingredients);
+  } catch (error) {
+    handleErrors(error, res);
   }
 };
