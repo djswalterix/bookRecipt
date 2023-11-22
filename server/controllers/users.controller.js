@@ -6,7 +6,7 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 exports.createUser = async (req, res) => {
   try {
     // Read data from user input (req.body)
-    const { name, surname, email, password } = req.body;
+    const { name, surname, email, password, role } = req.body;
     if (!emailRegex.test(email)) {
       throw new Error("Email not provided correctly");
     }
@@ -26,6 +26,7 @@ exports.createUser = async (req, res) => {
       surname,
       email,
       password_hash,
+      role: role || "user", // Assicurati che il ruolo di default sia 'user'
     });
 
     res.status(201).json(newUser);

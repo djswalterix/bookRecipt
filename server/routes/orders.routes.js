@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/orders.controller");
-const { verifyToken } = require("../auth/authMiddleware");
+const { verifyToken, isAdmin } = require("../auth/authMiddleware");
 // Route for creating a new order
 router.post("/", verifyToken, orderController.createOrder);
 
 // Route for getting all orders
-router.get("/", verifyToken, orderController.getAllOrders);
+router.get("/", verifyToken, isAdmin, orderController.getAllOrders);
 
 // Route for getting a order by id
 router.get("/:id", verifyToken, orderController.getOrderById);
@@ -14,6 +14,6 @@ router.get("/:id", verifyToken, orderController.getOrderById);
 router.put("/:id", verifyToken, orderController.updateOrder);
 
 // Route for deleting a order by id
-router.delete("/:id", verifyToken, orderController.deleteOrder);
+router.delete("/:id", verifyToken, isAdmin, orderController.deleteOrder);
 
 module.exports = router;
