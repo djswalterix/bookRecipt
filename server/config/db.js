@@ -11,13 +11,17 @@ console.log("DB_PASSWORD:", process.env.DB_PASSWORD);
 console.log("DB_NAME:", process.env.NODE_ENV ? "test" : process.env.DB_NAME);
 console.log("DB_NAME:", process.env.NODE_ENV);
 
+const dbName =
+  process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test"
+    ? "test"
+    : "defaultdb";
 const sequelize = new Sequelize({
   dialect: "mysql",
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.NODE_ENV ? "test" : process.env.DB_NAME,
+  database: dbName,
   ssl: {
     // This is the path to the downloaded CA certificate
     ca: fs.readFileSync("ca.pem"),
