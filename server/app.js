@@ -10,10 +10,10 @@ const recipesIngredientsRoutes = require("./routes/recipesIngredients.routes"); 
 const passport = require("./auth/passport");
 const session = require("express-session");
 const authRoutes = require("./routes/auth.routes");
-//const corsMiddleware = require("./config/cors");//////////////////////
-const cors = require("cors");
-//app.use(corsMiddleware);
-app.use(cors);
+const corsMiddleware = require("./config/cors"); //////////////////////
+
+app.use(corsMiddleware);
+
 app.use(express.json());
 // Altri middleware e configurazioni
 app.use("/api/auth", authRoutes);
