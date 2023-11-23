@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bookController = require("../controllers/books.controller");
-const { verifyToken } = require("../auth/authMiddleware");
+const { verifyToken, isAdmin } = require("../auth/authMiddleware");
 
 // Route for creating a new book
 router.post("/", verifyToken, isAdmin, bookController.createBook);
