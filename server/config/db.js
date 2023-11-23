@@ -3,18 +3,14 @@ const dotenv = require("dotenv");
 const fs = require("fs"); // Require the fs module to read the SSL certificate file
 
 dotenv.config();
+const dbName = process.env.NODE_ENV === "test" ? "test" : "defaultdb";
 
 console.log("DB_HOST:", process.env.DB_HOST);
 console.log("DB_PORT:", process.env.DB_PORT);
 console.log("DB_USER:", process.env.DB_USER);
 console.log("DB_PASSWORD:", process.env.DB_PASSWORD);
-console.log("DB_NAME:", process.env.NODE_ENV ? "test" : process.env.DB_NAME);
-console.log("DB_NAME:", process.env.NODE_ENV);
+console.log("DB_NAME:", dbName);
 
-const dbName =
-  process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test"
-    ? "test"
-    : "defaultdb";
 const sequelize = new Sequelize({
   dialect: "mysql",
   host: process.env.DB_HOST,
