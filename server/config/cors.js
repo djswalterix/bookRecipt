@@ -4,4 +4,5 @@ const corsOptions = {
   optionsSuccessStatus: 200, // Per browser legacy che non supportano CORS
 };
 
-app.use(cors(corsOptions));
+const corsMiddleware = cors(corsOptions);
+module.exports = corsMiddleware;
