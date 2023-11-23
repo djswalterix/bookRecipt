@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
+  /*server: {
     port: 8080, // Sostituisci con la porta desiderata
 
     proxy: {
@@ -14,5 +14,5 @@ export default defineConfig({
         secure: false,
       },
     },
-  },
+  },*/
 });
