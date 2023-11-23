@@ -12,8 +12,8 @@ const session = require("express-session");
 const authRoutes = require("./routes/auth.routes");
 const corsMiddleware = require("./config/cors");
 
-app.use(express.json());
 app.use(corsMiddleware);
+app.use(express.json());
 // Altri middleware e configurazioni
 app.use("/api/auth", authRoutes);
 
