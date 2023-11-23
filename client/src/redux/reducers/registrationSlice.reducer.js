@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axiosInstance from "../../assets/js/api";
 const initialState = {
   registrationStatus: "idle",
   loading: false, // Indica se una richiesta è in corso
@@ -11,7 +12,7 @@ export const register = createAsyncThunk(
   "auth/register",
   async ({ name, surname, email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/users", {
+      const response = await axiosInstance.post("/api/users", {
         name,
         surname,
         email,

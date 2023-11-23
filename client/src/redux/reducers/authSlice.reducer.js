@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axiosInstance from "../../assets/js/api";
 const initialState = {
   isAuthenticated: localStorage.getItem("token") ? true : false, // Inizialmente l'utente non è autenticato
 };
@@ -9,7 +10,10 @@ export const login = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/auth/login", { email, password });
+      const response = await axiosInstance.post("/api/auth/login", {
+        email,
+        password,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
