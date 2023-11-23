@@ -1,7 +1,9 @@
 import axios from "axios";
-import dotenv from "dotenv";
+
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:3000",
+  baseURL:
+    process.env.REACT_APP_API_URL ||
+    "https://bookrecip-e5a5d3bc5103.herokuapp.com/",
 });
 
 export default axiosInstance;
