@@ -19,9 +19,13 @@ router.post("/login", (req, res, next) => {
 
     console.log("Token Payload:", { sub: user.id });
     // Genera il token JWT
-    const token = jwt.sign({ sub: user.id }, "your-secret-key", {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { sub: user.id /*, role: user.role*/ },
+      "your-secret-key",
+      {
+        expiresIn: "1h",
+      }
+    );
     console.log("Generated Token:", token);
     return res.json({ success: true, token, user });
   })(req, res, next);

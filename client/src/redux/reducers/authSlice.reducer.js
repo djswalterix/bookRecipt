@@ -31,11 +31,13 @@ const authSlice = createSlice({
     loginSuccess: (state, action) => {
       state.isAuthenticated = true;
       state.user = action.payload.user;
+      //state.role = action.payload.role;
       // aggiungi altri aggiornamenti di stato necessari
     },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
+      //state.role = null;
     },
     // i tuoi reducer sincroni qui
   },

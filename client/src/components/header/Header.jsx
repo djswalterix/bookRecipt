@@ -23,6 +23,12 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  const userRole = user ? user.role : null; // Verifica che l'oggetto user sia definito prima di accedere a 'role'
+  const handleEditRecipeBook = () => {
+    // Naviga verso la pagina o il componente per la modifica delle ricette
+    navigate("/edit-recipe-book");
+  };
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("token"); // Rimuovere il token
@@ -99,6 +105,11 @@ function Header() {
             <Button color="inherit" component={RouterLink} to="/reciper">
               Ricettario
             </Button>
+            {userRole === "admin" && (
+              <Button color="inherit" onClick={handleEditRecipeBook}>
+                Modifica Ricettario
+              </Button>
+            )}
             {isAuthenticated ? (
               <Button color="inherit" onClick={handleLogout}>
                 Logout
