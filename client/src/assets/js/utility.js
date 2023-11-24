@@ -21,4 +21,16 @@ const macrocalc = (ingredients) => {
 
   return macros;
 };
-export { macrocalc };
+
+function emailCheck(email) {
+  const emailRegex =
+    /^(?=.{1,256}$)[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+  if (!emailRegex.test(email)) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+export { macrocalc, emailCheck };

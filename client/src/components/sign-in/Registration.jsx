@@ -13,6 +13,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import { login, setUserLoggedIn } from "../../redux/reducers/authSlice.reducer";
 import { register } from "../../redux/reducers/registrationSlice.reducer";
+import { emailCheck } from "../../assets/js/utility";
+
 export default function Registration() {
   const [errorMessage, setErrorMessage] = useState(""); // Aggiungi uno stato per il messaggio di errore
   const [name, setName] = useState("");
@@ -22,26 +24,50 @@ export default function Registration() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const error = useSelector((state) => state.auth.error);
+
+  const loading = useSelector((state) => state.registration.loading);
+  const error = useSelector((state) => state.registration.error);
 
   const defaultTheme = createTheme();
-  const loading = useSelector((state) => state.auth.loading); // Utilizza lo stato di caricamento dalla slice di registrazione
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/"); // Cambia '/' con il percorso della tua home page se è diverso
     }
   }, [isAuthenticated, navigate]);
+  useEffect(() => {
+    if (error) {
+      if (error.error == "Error while processing the request.") {
+        setErrorMessage("Errore durante la registrazione."); // Set the error message if there is an error in the state
+      } else {
+        //console.log(error.toString());
+        setErrorMessage(error);
+      }
+    }
+  }, [error]);
   const handleSubmit = async (event) => {
     event.preventDefault();
+    let errors = []; // Array to collect error messages
 
     console.log("passowrd " + password);
     console.log("email " + email);
     console.log("name " + name);
     console.log("surname " + surname);
 
-    if (!email.includes("@") || password.length < 6 || !name || !surname) {
-      setErrorMessage("Dati inseriti non validi");
+    if (!emailCheck(email)) {
+      errors.push("Email non valorizzata correttamente");
+    }
+    if (password.length < 7) {
+      errors.push("La password deve avere almeno 8 caratteri");
+    }
+    if (!name) {
+      errors.push("Nome non valorizzato");
+    }
+    if (!surname) {
+      errors.push("Cognome non valorizato");
+    }
+    if (errors.length > 0) {
+      setErrorMessage(errors.join(" - ")); // Join the errors into a single string
       return;
     }
     dispatch(
@@ -73,9 +99,9 @@ export default function Registration() {
           // Altre azioni post-login
         }
       })
-      .catch((error) => {
-        setErrorMessage("Errore durante la registrazione"); // Gestione degli errori
-        console.error("Errore durante la registrazione:", error);
+      .catch(() => {
+        console.error("Registration error:", error);
+        setErrorMessage("Errore durante la registrazione");
       });
   };
   return (
@@ -95,7 +121,11 @@ export default function Registration() {
           autoComplete="off"
         >
           {errorMessage && (
-            <Typography color="error">{errorMessage}</Typography>
+            <Typography color="error">
+              {typeof errorMessage === "string"
+                ? errorMessage
+                : errorMessage.error}
+            </Typography>
           )}
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <HowToRegIcon />

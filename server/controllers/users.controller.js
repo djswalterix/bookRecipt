@@ -1,14 +1,17 @@
 const User = require("../models/users.model"); // Import User Model
 //const bcrypt = require("bcrypt");
 const { Sequelize } = require("sequelize");
-const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+//const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+const emailRegex =
+  /^(?=.{1,256}$)[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 exports.createUser = async (req, res) => {
   try {
     // Read data from user input (req.body)
     const { name, surname, email, password, role } = req.body;
     if (!emailRegex.test(email)) {
-      throw new Error("Email not provided correctly");
+      //throw new Error("Email not provided correctly");
+      return res.status(400).json({ error: "Email not provided correctly." });
     }
     // Validate password
     if (!password || password.length < 8) {
@@ -31,6 +34,7 @@ exports.createUser = async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (error) {
+    //res.status(400).json(error);
     handleErrors(error, res);
   }
 };
@@ -48,7 +52,7 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserByEmail = async (req, res) => {
   console.log("find by email");
   try {
-    const { email } = req.params;
+    const { email } = req.params.toLowerCase();
     const user = await User.findByEmail(email);
 
     if (!user) {
@@ -114,6 +118,8 @@ const handleErrors = (error, res) => {
       .json({ error: "User with this email address already exists." });
   } else {
     console.error(error);
-    res.status(500).json({ error: "Error while processing the request." });
+    res
+      .status(500)
+      .json({ error: "Error while processing the request. " + error });
   }
 };
