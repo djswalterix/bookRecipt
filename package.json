@@ -8,9 +8,11 @@
     "start:server": "cd server && node app.js",
     "start:app": "concurrently \"npm run start:client\" \"npm run start:server\"",
     "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm install && npm run build",
     "test:client": "cd client && npm test",
     "test:server": "cd server && npm test",
-    "test": "npm run test:client && npm run test:server"
+    "test": "npm run test:client && npm run test:server",
+    "postinstall": "cd server && npm install && cd ../client && npm install"
   },
   "keywords": [],
   "author": "",

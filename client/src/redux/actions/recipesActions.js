@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../../assets/js/api";
 export const fetchReciptAndIngredients = () => async (dispatch, getState) => {
   const token = localStorage.getItem("token");
   const cachedData = getState().recipes.data;
@@ -10,7 +10,7 @@ export const fetchReciptAndIngredients = () => async (dispatch, getState) => {
   }
 
   try {
-    const response = await axios.get("/api/recipes/ingredients/", {
+    const response = await axiosInstance.get("/api/recipes/ingredients/", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

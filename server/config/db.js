@@ -3,6 +3,13 @@ const dotenv = require("dotenv");
 const fs = require("fs"); // Require the fs module to read the SSL certificate file
 
 dotenv.config();
+const dbName = process.env.NODE_ENV === "test" ? "test" : "defaultdb";
+
+console.log("DB_HOST:", process.env.DB_HOST);
+console.log("DB_PORT:", process.env.DB_PORT);
+console.log("DB_USER:", process.env.DB_USER);
+console.log("DB_PASSWORD:", process.env.DB_PASSWORD);
+console.log("DB_NAME:", dbName);
 
 const sequelize = new Sequelize({
   dialect: "mysql",
@@ -10,7 +17,7 @@ const sequelize = new Sequelize({
   port: process.env.DB_PORT,
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.NODE_ENV ? "test" : process.env.DB_NAME,
+  database: dbName,
   ssl: {
     // This is the path to the downloaded CA certificate
     ca: fs.readFileSync("ca.pem"),
