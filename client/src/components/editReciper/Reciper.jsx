@@ -123,6 +123,15 @@ const Ricettario = () => {
           />
         </Box>
         <List>
+          <ListItemButton
+            key={-1}
+            onClick={() => selezionaRicetta(null)}
+            sx={{
+              color: "blue",
+            }}
+          >
+            Nuova Ricetta
+          </ListItemButton>
           {ricetteFiltrate.map((ricetta, index) => (
             <ListItemButton
               sx={{

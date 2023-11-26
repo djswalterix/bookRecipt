@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -12,6 +12,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 const RecipeEditForm = ({ ricetta, onSave }) => {
+  //console.log(ricetta);
+
   const [formData, setFormData] = useState({
     name: ricetta?.name || "",
     description: ricetta?.description || "",
@@ -20,6 +22,28 @@ const RecipeEditForm = ({ ricetta, onSave }) => {
       { name: "", calories: "", fat: "", carbohydrates: "", protein: "" },
     ],
   });
+  useEffect(() => {
+    if (ricetta?.id !== formData.id) {
+      setFormData({
+        id: ricetta?.id || -1,
+        name: ricetta?.name,
+        description: ricetta?.description || "",
+        directions: ricetta?.directions || "",
+        ingredients:
+          Array.isArray(ricetta?.Ingredients) && ricetta.Ingredients.length > 0
+            ? ricetta.Ingredients
+            : [
+                {
+                  name: "",
+                  calories: "",
+                  fat: "",
+                  carbohydrates: "",
+                  protein: "",
+                },
+              ],
+      });
+    }
+  }, [ricetta]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -50,6 +74,7 @@ const RecipeEditForm = ({ ricetta, onSave }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    console.log(formData);
   };
 
   const handleSubmit = (e) => {
