@@ -29,14 +29,20 @@ const fetchIngredientsByRecipe = async (id) => {
 };*/
 
 const fetchReciptAndIngredients = async () => {
+  return fetchData("/api/recipes/ingredients/");
+};
+const fetchIngredients = async () => {
+  return fetchData("/api/ingredients/");
+};
+
+const fetchData = async (url) => {
   const token = localStorage.getItem("token");
-  const response = await axiosInstance.get("/api/recipes/ingredients/", {
+  const response = await axiosInstance.get(url, {
     headers: {
-      // Inserisci qui il tuo header di autenticazione, se necessario
       Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
 };
 
-export { /*fetchRecipt,*/ fetchIngredientsByRecipe, fetchReciptAndIngredients };
+export { /*fetchRecipt,*/ fetchIngredients, fetchReciptAndIngredients };

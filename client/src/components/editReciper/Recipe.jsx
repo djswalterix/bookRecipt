@@ -6,14 +6,20 @@ import {
   Paper,
   IconButton,
   Typography,
+  Autocomplete,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-const RecipeEditForm = ({ ricetta, onSave }) => {
-  //console.log(ricetta);
+import { fetchIngredients } from "../../assets/js/dataFetch";
 
+const RecipeEditForm = ({ ricetta }) => {
+  function onSave() {
+    console.log(formData);
+  }
+  //console.log(ingredientsList);
+  const [ingredientsList, setIngredientsList] = useState([]);
   const [formData, setFormData] = useState({
     name: ricetta?.name || "",
     description: ricetta?.description || "",
@@ -22,6 +28,15 @@ const RecipeEditForm = ({ ricetta, onSave }) => {
       { name: "", calories: "", fat: "", carbohydrates: "", protein: "" },
     ],
   });
+  useEffect(() => {
+    const loadIngredients = async () => {
+      const fetchedIngredients = await fetchIngredients();
+      setIngredientsList(fetchedIngredients);
+    };
+
+    loadIngredients();
+  }, []);
+
   useEffect(() => {
     if (ricetta?.id !== formData.id) {
       setFormData({
@@ -46,15 +61,31 @@ const RecipeEditForm = ({ ricetta, onSave }) => {
   }, [ricetta]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const handleIngredientChange = (index, newValue) => {
+    console.log("handleIngredientChange" + index + " : " + newValue);
+    let newIngredient;
+    if (typeof newValue === undefined) {
+      // Nuovo ingrediente inserito manualmente
+      newIngredient = {
+        name: newValue,
+        calories: "",
+        fat: "",
+        carbohydrates: "",
+        protein: "",
+      };
+    } else if (typeof newValue === "object") {
+      // Ingrediente selezionato dall'elenco
+      newIngredient = newValue;
+    } else {
+      // Se newValue non è né una stringa né un oggetto, mantieni l'ingrediente come è
+      newIngredient = formData.ingredients[index];
+    }
 
-  const handleIngredientChange = (index, e) => {
-    const newIngredients = formData.ingredients.map((ingredient, i) => {
-      if (i === index) {
-        return { ...ingredient, [e.target.name]: e.target.value };
-      }
-      return ingredient;
-    });
-    setFormData({ ...formData, ingredients: newIngredients });
+    const updatedIngredients = formData.ingredients.map((ingredient, i) =>
+      i === index ? newIngredient : ingredient
+    );
+
+    setFormData({ ...formData, ingredients: updatedIngredients });
   };
 
   const addIngredient = () => {
@@ -127,40 +158,86 @@ const RecipeEditForm = ({ ricetta, onSave }) => {
               mb: 1,
             }}
           >
-            <TextField
-              label="Nome"
-              name="name"
-              value={ingredient.name}
-              onChange={(e) => handleIngredientChange(index, e)}
-              sx={{ mr: 1 }}
+            <Autocomplete
+              freeSolo
+              options={ingredientsList}
+              getOptionLabel={(option) =>
+                typeof option === "string" ? option : option.name
+              }
+              value={ingredient.name || ""}
+              onChange={(event, newValue) => {
+                if (typeof newValue === "string") {
+                  // Gestisce l'input libero
+                  handleIngredientChange(index, {
+                    ...ingredient,
+                    name: newValue,
+                  });
+                } else if (typeof newValue === "object" && newValue !== null) {
+                  // Gestisce la selezione dall'elenco
+                  handleIngredientChange(index, newValue);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  onChange={(e) =>
+                    handleIngredientChange(index, {
+                      ...ingredient,
+                      name: e.target.value,
+                    })
+                  }
+                  label="Ingredients"
+                />
+              )}
+              sx={{ mr: 1, width: "15%" }}
             />
             <TextField
               label="Calorie"
               name="calories"
-              value={ingredient.calories}
-              onChange={(e) => handleIngredientChange(index, e)}
-              sx={{ mr: 1 }}
+              value={ingredient.calories || ""}
+              onChange={(e) =>
+                handleIngredientChange(index, {
+                  ...ingredient,
+                  calories: e.target.value,
+                })
+              }
+              sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}
             />
             <TextField
               label="Grassi"
               name="fat"
-              value={ingredient.fat}
-              onChange={(e) => handleIngredientChange(index, e)}
-              sx={{ mr: 1 }}
+              value={ingredient.fat || ""}
+              onChange={(e) =>
+                handleIngredientChange(index, {
+                  ...ingredient,
+                  fat: e.target.value,
+                })
+              }
+              sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}
             />
             <TextField
               label="Carboidrati"
               name="carbohydrates"
-              value={ingredient.carbohydrates}
-              onChange={(e) => handleIngredientChange(index, e)}
-              sx={{ mr: 1 }}
+              value={ingredient.carbohydrates || ""}
+              onChange={(e) =>
+                handleIngredientChange(index, {
+                  ...ingredient,
+                  carbohydrates: e.target.value,
+                })
+              }
+              sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}
             />
             <TextField
-              label="proteine"
+              label="Proteine"
               name="protein"
-              value={ingredient.protein}
-              onChange={(e) => handleIngredientChange(index, e)}
-              sx={{ mr: 1 }}
+              value={ingredient.protein || ""}
+              onChange={(e) =>
+                handleIngredientChange(index, {
+                  ...ingredient,
+                  protein: e.target.value,
+                })
+              }
+              sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}
             />
             <IconButton onClick={() => removeIngredient(index)}>
               <DeleteIcon />
