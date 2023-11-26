@@ -13,10 +13,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { fetchIngredients } from "../../assets/js/dataFetch";
-
+import { updateRecipt } from "../../assets/js/reciptUpdate";
 const RecipeEditForm = ({ ricetta }) => {
   function onSave() {
-    console.log(formData);
+    updateRecipt(formData, ingredientsList);
   }
   //console.log(ingredientsList);
   const [ingredientsList, setIngredientsList] = useState([]);
