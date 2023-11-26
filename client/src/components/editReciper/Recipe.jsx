@@ -41,7 +41,7 @@ const RecipeEditForm = ({ ricetta }) => {
     if (ricetta?.id !== formData.id) {
       setFormData({
         id: ricetta?.id || -1,
-        name: ricetta?.name,
+        name: ricetta?.name || "",
         description: ricetta?.description || "",
         directions: ricetta?.directions || "",
         ingredients:
