@@ -16,7 +16,8 @@ import { fetchIngredients } from "../../assets/js/dataFetch";
 import { updateRecipt } from "../../assets/js/reciptUpdate";
 const RecipeEditForm = ({ ricetta }) => {
   function onSave() {
-    updateRecipt(formData, ingredientsList);
+    console.log(formData);
+    updateRecipt(formData, ingredientsList, ricetta);
   }
   //console.log(ingredientsList);
   const [ingredientsList, setIngredientsList] = useState([]);
@@ -25,7 +26,14 @@ const RecipeEditForm = ({ ricetta }) => {
     description: ricetta?.description || "",
     directions: ricetta?.directions || "",
     ingredients: ricetta?.ingredients || [
-      { name: "", calories: "", fat: "", carbohydrates: "", protein: "" },
+      {
+        name: "",
+        calories: "",
+        fat: "",
+        carbohydrates: "",
+        protein: "",
+        quantity: "",
+      },
     ],
   });
   useEffect(() => {
@@ -46,7 +54,10 @@ const RecipeEditForm = ({ ricetta }) => {
         directions: ricetta?.directions || "",
         ingredients:
           Array.isArray(ricetta?.Ingredients) && ricetta.Ingredients.length > 0
-            ? ricetta.Ingredients
+            ? ricetta.Ingredients.map((ing) => ({
+                ...ing,
+                quantity: ing.RecipeIngredient?.quantity || "",
+              }))
             : [
                 {
                   name: "",
@@ -54,6 +65,7 @@ const RecipeEditForm = ({ ricetta }) => {
                   fat: "",
                   carbohydrates: "",
                   protein: "",
+                  quantity: "",
                 },
               ],
       });
@@ -72,6 +84,7 @@ const RecipeEditForm = ({ ricetta }) => {
         fat: "",
         carbohydrates: "",
         protein: "",
+        quantity: "",
       };
     } else if (typeof newValue === "object") {
       // Ingrediente selezionato dall'elenco
@@ -93,7 +106,14 @@ const RecipeEditForm = ({ ricetta }) => {
       ...formData,
       ingredients: [
         ...formData.ingredients,
-        { name: "", calories: "", fat: "", carbohydrates: "", protein: "" },
+        {
+          name: "",
+          calories: "",
+          fat: "",
+          carbohydrates: "",
+          protein: "",
+          quantity: "",
+        },
       ],
     });
   };
@@ -235,6 +255,18 @@ const RecipeEditForm = ({ ricetta }) => {
                 handleIngredientChange(index, {
                   ...ingredient,
                   protein: e.target.value,
+                })
+              }
+              sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}
+            />
+            <TextField
+              label="Quantità"
+              name="quantity"
+              value={ingredient.quantity || ""}
+              onChange={(e) =>
+                handleIngredientChange(index, {
+                  ...ingredient,
+                  quantity: e.target.value,
                 })
               }
               sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}

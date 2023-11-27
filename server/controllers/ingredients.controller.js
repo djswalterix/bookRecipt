@@ -4,7 +4,7 @@ const Recipe = require("../models/recipes.model");
 exports.createIngredient = async (req, res) => {
   try {
     // Read data from ingredient input (req.body)
-    const { name, protein, fat, carbohydrates } = req.body;
+    const { name, protein, fat, carbohydrates, calories } = req.body;
 
     // Create a new ingredient in the database
     const newIngredient = await Ingredient.create({
@@ -12,6 +12,7 @@ exports.createIngredient = async (req, res) => {
       fat,
       carbohydrates,
       protein,
+      calories,
     });
 
     res.status(201).json(newIngredient);
