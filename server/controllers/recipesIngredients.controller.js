@@ -81,6 +81,34 @@ exports.updateRecipeIngredient = async (req, res) => {
     handleErrors(error, res);
   }
 };
+
+// Function to update a recipeIngredient by idrecipet
+exports.updateRecipeIngredientByRecipeId = async (req, res) => {
+  try {
+    const { RecipeId, IngredientId } = req.body;
+    const updates = req.body;
+    console.log(`RecipeId ${RecipeId} , IngredientId ${IngredientId} `);
+    const recipeIngredient = await RecipeIngredient.findOne({
+      where: {
+        RecipeId: RecipeId,
+        IngredientId: IngredientId,
+      },
+    });
+
+    if (!recipeIngredient) {
+      return res.status(404).json({ error: "RecipeIngredient not found." });
+    }
+
+    if (updates.quantity) {
+      recipeIngredient.quantity = updates.quantity;
+    }
+    // Save
+    const updatedRecipeIngredient = await recipeIngredient.save();
+    res.status(200).json(updatedRecipeIngredient);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
 // Function to delete a recipeIngredient by id
 exports.deleteRecipeIngredient = async (req, res) => {
   try {

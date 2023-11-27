@@ -13,6 +13,13 @@ router.post(
 // Route for getting all recipesIngredients
 router.get("/", verifyToken, recipesIngredients.getAllRecipeIngredients);
 
+// Route for updating a recipesIngredients by id recipt
+router.put(
+  "/recipe/",
+  verifyToken,
+  isAdmin,
+  recipesIngredients.updateRecipeIngredientByRecipeId
+);
 // Route for getting a recipesIngredients by id
 router.get("/:id", verifyToken, recipesIngredients.getRecipeIngredientById);
 // Route for updating a recipesIngredients by id
@@ -22,7 +29,6 @@ router.put(
   isAdmin,
   recipesIngredients.updateRecipeIngredient
 );
-
 // Route for deleting a recipesIngredients by id
 router.delete(
   "/:id",

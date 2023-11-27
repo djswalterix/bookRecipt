@@ -1,5 +1,5 @@
 import axios from "axios";
-import axiosInstance from "../../assets/js/api";
+import axiosInstance from "./api";
 /*
 const fetchRecipt = async () => {
   const token = localStorage.getItem("token");
@@ -11,7 +11,7 @@ const fetchRecipt = async () => {
   });
   return response.data;
 };*/
-
+/*
 const fetchIngredientsByRecipe = async (id) => {
   console.log(`/api/ingredients/byrecipeid/${id}`);
   const token = localStorage.getItem("token");
@@ -26,17 +26,23 @@ const fetchIngredientsByRecipe = async (id) => {
   );
   console.log(response.data);
   return response.data;
-};
+};*/
 
 const fetchReciptAndIngredients = async () => {
+  return fetchData("/api/recipes/ingredients/");
+};
+const fetchIngredients = async () => {
+  return fetchData("/api/ingredients/");
+};
+
+const fetchData = async (url) => {
   const token = localStorage.getItem("token");
-  const response = await axiosInstance.get("/api/recipes/ingredients/", {
+  const response = await axiosInstance.get(url, {
     headers: {
-      // Inserisci qui il tuo header di autenticazione, se necessario
       Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
 };
 
-export { /*fetchRecipt,*/ fetchIngredientsByRecipe, fetchReciptAndIngredients };
+export { /*fetchRecipt,*/ fetchIngredients, fetchReciptAndIngredients };
