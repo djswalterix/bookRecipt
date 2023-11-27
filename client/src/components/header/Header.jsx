@@ -46,14 +46,14 @@ function Header() {
       >
         Home
       </Button>
-      <Button
-        color="inherit"
-        component={RouterLink}
-        to="/chi-siamo"
-        sx={{ display: "block" }}
-      >
-        Chi Siamo
+      <Button color="inherit" component={RouterLink} to="/reciper">
+        Ricettario
       </Button>
+      {userRole === "admin" && (
+        <Button color="inherit" onClick={handleEditRecipeBook}>
+          Modifica Ricettario
+        </Button>
+      )}
       {isAuthenticated ? (
         <Button color="inherit" onClick={handleLogout}>
           Esci
