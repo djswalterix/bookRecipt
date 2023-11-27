@@ -80,7 +80,7 @@ exports.updateRecipe = async (req, res) => {
           }
         });
       }
-      const image_path = "/images/" + req.file.filename;
+      const image_path = "/images/recpitImages/" + req.file.filename;
       recipe.image_path = image_path;
     }
 
