@@ -272,8 +272,11 @@ async function updateRecipt(form, image, listIngredients, oldRecipt) {
   //return false;
 }
 
-async function deleteRecipt(recipeId) {
-  await deleteAllfromRecipesIngredientApi(recipeId);
-  await deleteReciptApi(recipeId);
+async function deleteRecipt(recipe) {
+  if (recipe.Ingredients && recipe.Ingredients.length > 0) {
+    await deleteAllfromRecipesIngredientApi(recipe.id);
+  }
+
+  await deleteReciptApi(recipe.id);
 }
 export { updateRecipt, deleteRecipt };

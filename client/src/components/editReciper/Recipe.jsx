@@ -99,33 +99,51 @@ const RecipeEditForm = ({ ricetta }) => {
     setOpenDialog(false);
   };
   const handleDeleteRecipe = async () => {
-    await deleteRecipt(formData.id);
-    // ...
+    try {
+      await deleteRecipt(formData);
+      setSnackbar({
+        open: true,
+        message: "Ricetta eliminata con successo!",
+      });
+      setTimeout(() => {
+        window.location.reload(); // Opzionale: ricarica la pagina o reindirizza l'utente
+      }, 2000); // 2000 millisecondi = 2 secondi
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Errore durante l'eliminazione della ricetta.",
+      });
+    }
     handleCloseDialog();
   };
   useEffect(() => {
     if (ricetta?.id !== formData.id) {
+      const mappedIngredients = Array.isArray(ricetta?.Ingredients)
+        ? ricetta.Ingredients.map((ing) => ({
+            name: ing?.name || "",
+            calories: ing?.calories || "",
+            fat: ing?.fat || "",
+            carbohydrates: ing?.carbohydrates || "",
+            protein: ing?.protein || "",
+            quantity: ing?.RecipeIngredient?.quantity || "",
+          }))
+        : [
+            {
+              name: "",
+              calories: "",
+              fat: "",
+              carbohydrates: "",
+              protein: "",
+              quantity: "",
+            },
+          ];
+
       setFormData({
         id: ricetta?.id || -1,
         name: ricetta?.name || "",
         description: ricetta?.description || "",
         directions: ricetta?.directions || "",
-        ingredients:
-          Array.isArray(ricetta?.Ingredients) && ricetta.Ingredients.length > 0
-            ? ricetta.Ingredients.map((ing) => ({
-                ...ing,
-                quantity: ing.RecipeIngredient?.quantity || "",
-              }))
-            : [
-                {
-                  name: "",
-                  calories: "",
-                  fat: "",
-                  carbohydrates: "",
-                  protein: "",
-                  quantity: "",
-                },
-              ],
+        ingredients: mappedIngredients,
       });
     }
   }, [ricetta]);
@@ -294,9 +312,9 @@ const RecipeEditForm = ({ ricetta }) => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  error={formErrors.ingredients[index].name}
+                  error={formErrors.ingredients[index]?.name ?? false}
                   helperText={
-                    formErrors.ingredients[index].name &&
+                    formErrors.ingredients[index]?.name &&
                     "Il nome dell'ingrediente è obbligatorio"
                   }
                   label="Ingredients"
@@ -313,9 +331,9 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Calorie"
               name="calories"
-              error={formErrors.ingredients[index].calories}
+              error={formErrors.ingredients[index]?.calories ?? false}
               helperText={
-                formErrors.ingredients[index].calories &&
+                formErrors.ingredients[index]?.calories &&
                 "Le calorie sono obbligatorie"
               }
               value={ingredient.calories || ""}
@@ -330,9 +348,10 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Grassi"
               name="fat"
-              error={formErrors.ingredients[index].fat}
+              error={formErrors.ingredients[index]?.fat ?? false}
               helperText={
-                formErrors.ingredients[index].fat && "I grassi sono obbligatori"
+                formErrors.ingredients[index]?.fat &&
+                "I grassi sono obbligatori"
               }
               value={ingredient.fat || ""}
               onChange={(e) =>
@@ -346,9 +365,9 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Carboidrati"
               name="carbohydrates"
-              error={formErrors.ingredients[index].carbohydrates}
+              error={formErrors.ingredients[index]?.carbohydrates ?? false}
               helperText={
-                formErrors.ingredients[index].carbohydrates &&
+                formErrors.ingredients[index]?.carbohydrates &&
                 "I carboidrati sono obbligatori"
               }
               value={ingredient.carbohydrates || ""}
@@ -363,9 +382,9 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Proteine"
               name="protein"
-              error={formErrors.ingredients[index].protein}
+              error={formErrors.ingredients[index]?.protein ?? false}
               helperText={
-                formErrors.ingredients[index].protein &&
+                formErrors.ingredients[index]?.protein &&
                 "Le proteine sono obbligatorie"
               }
               value={ingredient.protein || ""}
@@ -380,9 +399,9 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Quantità"
               name="quantity"
-              error={formErrors.ingredients[index].quantity}
+              error={formErrors.ingredients[index]?.quantity ?? false}
               helperText={
-                formErrors.ingredients[index].quantity &&
+                formErrors.ingredients[index]?.quantity &&
                 "La quantità è obbligatoria"
               }
               value={ingredient.quantity || ""}
