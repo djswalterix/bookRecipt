@@ -1,7 +1,7 @@
 const Recipe = require("../models/recipes.model"); // Import Recipe Model
 const { Sequelize } = require("sequelize");
 const Ingredient = require("../models/ingredients.model");
-const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 exports.createRecipe = async (req, res) => {
   try {
     // Read data from recipe input (req.body)
@@ -9,7 +9,7 @@ exports.createRecipe = async (req, res) => {
     let image_path = null;
     if (req.file) {
       // Qui puoi salvare il percorso del nuovo file immagine
-      image_path = "/images/" + req.file.filename;
+      image_path = req.file.path;
     } else {
       return res.status(404).json({ error: "Image not found." });
     }
@@ -71,16 +71,18 @@ exports.updateRecipe = async (req, res) => {
     if (req.file) {
       // Qui puoi salvare il percorso del nuovo file immagine
       if (recipe.image_path) {
-        const existingImagePath = "../client/public" + recipe.image_path;
+        const existingImagePath = recipe.image_path;
         console.log(existingImagePath);
-        fs.unlink(existingImagePath, (err) => {
-          if (err) {
-            console.error("Failed to delete existing image:", err);
-            // Considera se vuoi gestire l'errore in modo specifico
+        cloudinary.uploader.destroy(existingImagePath, (error, result) => {
+          if (error) {
+            console.error("Failed to delete image from Cloudinary:", error);
+            // Gestisci l'errore come preferisci
+          } else {
+            console.log("Deleted image from Cloudinary:", result);
           }
         });
       }
-      const image_path = "/images/recpitImages/" + req.file.filename;
+      const image_path = req.file.path;
       recipe.image_path = image_path;
     }
 
@@ -107,12 +109,14 @@ exports.deleteRecipe = async (req, res) => {
     }
     try {
       if (recipe.image_path) {
-        const existingImagePath = "../client/public" + recipe.image_path;
+        const existingImagePath = recipe.image_path;
         console.log(existingImagePath);
-        fs.unlink(existingImagePath, (err) => {
-          if (err) {
-            console.error("Failed to delete existing image:", err);
-            // Considera se vuoi gestire l'errore in modo specifico
+        cloudinary.uploader.destroy(existingImagePath, (error, result) => {
+          if (error) {
+            console.error("Failed to delete image from Cloudinary:", error);
+            // Gestisci l'errore come preferisci
+          } else {
+            console.log("Deleted image from Cloudinary:", result);
           }
         });
       }

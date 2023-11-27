@@ -13,6 +13,7 @@ import {
   DialogContentText,
   DialogTitle,
   Snackbar,
+  CircularProgress,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,6 +24,7 @@ import { updateRecipt, deleteRecipt } from "../../assets/js/reciptUpdate";
 const RecipeEditForm = ({ ricetta }) => {
   const onSave = async () => {
     if (validateForm()) {
+      setIsSaving(true); // Inizio del processo di salvataggio
       try {
         await updateRecipt(formData, image, ingredientsList, ricetta);
         setSnackbar({ open: true, message: "Ricetta salvata con successo!" });
@@ -34,6 +36,8 @@ const RecipeEditForm = ({ ricetta }) => {
           open: true,
           message: "Errore durante il salvataggio della ricetta.",
         });
+      } finally {
+        setIsSaving(false); // Fine del processo di salvataggio
       }
     } else {
       setSnackbar({
@@ -44,6 +48,7 @@ const RecipeEditForm = ({ ricetta }) => {
   };
 
   //console.log(ingredientsList);
+  const [isSaving, setIsSaving] = useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
   const [formData, setFormData] = useState({
@@ -422,9 +427,16 @@ const RecipeEditForm = ({ ricetta }) => {
           Aggiungi Ingrediente
         </Button>
         <input type="file" onChange={handleImageChange} />
-        {/* Aggiungi altri campi come necessario */}
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{ mt: 2 }}
+          disabled={isSaving}
+        >
           Salva
+          {isSaving && (
+            <CircularProgress size={24} sx={{ position: "absolute" }} />
+          )}
         </Button>
       </Box>
       {formData.id !== -1 && (
