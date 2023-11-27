@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://bookrecip-e5a5d3bc5103.herokuapp.com/",
+  baseURL: "https://bookrecip-e5a5d3bc5103.herokuapp.com",
 });
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const excludeUrls = ["/api/auth/login", "/api/users"];
