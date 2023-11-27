@@ -36,7 +36,7 @@ router.post("/login", (req, res, next) => {
       role: user.role,
     };
 
-    return res.json({ success: true, token, user: userForFrontend });
+    return res.json({ success: true, token, user /*user: userForFrontend*/ });
   })(req, res, next);
 });
 
