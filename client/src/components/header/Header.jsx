@@ -46,11 +46,20 @@ function Header() {
       >
         Home
       </Button>
-      <Button color="inherit" component={RouterLink} to="/reciper">
+      <Button
+        color="inherit"
+        sx={{ display: "block" }}
+        component={RouterLink}
+        to="/reciper"
+      >
         Ricettario
       </Button>
       {userRole === "admin" && (
-        <Button color="inherit" onClick={handleEditRecipeBook}>
+        <Button
+          color="inherit"
+          sx={{ display: "block" }}
+          onClick={handleEditRecipeBook}
+        >
           Modifica Ricettario
         </Button>
       )}
