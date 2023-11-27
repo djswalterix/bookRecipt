@@ -23,8 +23,8 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
-  const userRole = user ? user.role : null; // Verifica che l'oggetto user sia definito prima di accedere a 'role'
+  //const userRole = useSelector((state) => state.auth.user.role); // Accedi al ruolo dell'utente
+  const userRole = useSelector((state) => state.auth.role);
   const handleEditRecipeBook = () => {
     // Naviga verso la pagina o il componente per la modifica delle ricette
     navigate("/edit-recipe-book");

@@ -72,7 +72,10 @@ export default function SignIn() {
     )
       .then((response) => {
         if (response.payload && response.payload.token) {
+          const expirationTime = new Date(new Date().getTime() + 3600 * 1000); // 1 ora da ora
           localStorage.setItem("token", response.payload.token); // Salvare il token
+          localStorage.setItem("role", action.payload.user.role);
+          localStorage.setItem("tokenTimestamp", Date.now());
           dispatch(setUserLoggedIn(true)); // Aggiornare lo stato di Redux
           // Altre azioni post-login
         } else {
