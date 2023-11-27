@@ -106,7 +106,7 @@ const linkRecipesIngredientsApi = async (reciptId, ingredient) => {
 const updQuantityApi = async (ingredient, reciptId) => {
   const token = localStorage.getItem("token");
   const response = await axiosInstance.put(
-    `/api/recipesIngredients/recipe`,
+    `/api/recipesIngredients/recipe/`,
     {
       RecipeId: reciptId,
       IngredientId: ingredient.id,
@@ -132,7 +132,25 @@ function getIngredientQuantityById(recipe, ingredientId) {
     return null; // Restituisce null se l'ingrediente non è trovato o non ha un campo RecipeIngredient
   }
 }
-
+const deletefromRecipesIngredientApi = async (ingredient) => {
+  const token = localStorage.getItem("token");
+  const response = await axiosInstance.put(
+    `/api/ingredients/${ingredient.id}`,
+    {
+      name: ingredient.name,
+      calories: ingredient.calories,
+      fat: ingredient.fat,
+      carbohydrates: ingredient.carbohydrates,
+      protein: ingredient.protein,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
 async function updateRecipt(form, listIngredients, oldRecipt) {
   let newIngredients = [];
 
@@ -164,6 +182,12 @@ async function updateRecipt(form, listIngredients, oldRecipt) {
     ) {
       await updQuantityApi(ingredient, form.id);
     }
+  }
+  const removedIngredients = oldRecipt.Ingredients.filter(
+    (oldIng) => !form.ingredients.some((newIng) => newIng.id === oldIng.id)
+  );
+  for (const ingredient of removedIngredients) {
+    await removeRecipeIngredientApi(form.id, ingredient.id);
   }
   return false;
 }

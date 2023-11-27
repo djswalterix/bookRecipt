@@ -31,6 +31,13 @@ router.put(
 );
 // Route for deleting a recipesIngredients by id
 router.delete(
+  "/recipe/",
+  verifyToken,
+  isAdmin,
+  recipesIngredients.deleteRecipeIngredientbyId
+);
+// Route for deleting a recipesIngredients by id
+router.delete(
   "/:id",
   verifyToken,
   isAdmin,
