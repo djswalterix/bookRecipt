@@ -112,8 +112,9 @@ exports.updateRecipeIngredientByRecipeId = async (req, res) => {
 exports.deleteRecipeIngredientbyId = async (req, res) => {
   try {
     //console.log(req.params.id);
-    const { RecipeId, IngredientId } = req.body;
-    console.log(`RecipeId ${RecipeId} , IngredientId ${IngredientId} `);
+    const { RecipeId, IngredientId } = req.query;
+    console.log(`RecipeId ${RecipeId} , IngredientId ${IngredientId}`);
+
     const recipeIngredient = await RecipeIngredient.findOne({
       where: {
         RecipeId: RecipeId,
@@ -125,6 +126,31 @@ exports.deleteRecipeIngredientbyId = async (req, res) => {
     }
     const deletedRecipeIngredient = await recipeIngredient.destroy();
     res.status(200).json(deletedRecipeIngredient);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+exports.deleteRecipeIngredientbyRecipe = async (req, res) => {
+  try {
+    const RecipeId = req.params.id;
+
+    const recipeIngredients = await RecipeIngredient.findAll({
+      where: { RecipeId: RecipeId },
+    });
+
+    if (recipeIngredients.length === 0) {
+      return res.status(404).json({ error: "RecipeIngredient not found." });
+    }
+
+    // Distruggere ogni elemento dell'array
+    for (const ri of recipeIngredients) {
+      await ri.destroy();
+    }
+
+    // Rispondere con successo
+    res
+      .status(200)
+      .json({ message: "RecipeIngredients deleted successfully." });
   } catch (error) {
     handleErrors(error, res);
   }

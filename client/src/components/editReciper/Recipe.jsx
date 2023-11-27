@@ -7,19 +7,44 @@ import {
   IconButton,
   Typography,
   Autocomplete,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Snackbar,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { fetchIngredients } from "../../assets/js/dataFetch";
-import { updateRecipt } from "../../assets/js/reciptUpdate";
+import { updateRecipt, deleteRecipt } from "../../assets/js/reciptUpdate";
 const RecipeEditForm = ({ ricetta }) => {
-  function onSave() {
-    console.log(formData);
-    updateRecipt(formData, ingredientsList, ricetta);
-  }
+  const onSave = async () => {
+    if (validateForm()) {
+      try {
+        await updateRecipt(formData, ingredientsList, ricetta);
+        setSnackbar({ open: true, message: "Ricetta salvata con successo!" });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // 2000 millisecondi = 2 secondi
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: "Errore durante il salvataggio della ricetta.",
+        });
+      }
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Errore: controlla i dati inseriti.",
+      });
+    }
+  };
+
   //console.log(ingredientsList);
+  const [openDialog, setOpenDialog] = React.useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
   const [formData, setFormData] = useState({
     name: ricetta?.name || "",
@@ -36,6 +61,23 @@ const RecipeEditForm = ({ ricetta }) => {
       },
     ],
   });
+  const [formErrors, setFormErrors] = useState({
+    name: false,
+    description: false,
+    directions: false,
+    ingredients: formData.ingredients.map(() => ({
+      name: false,
+      calories: false,
+      fat: false,
+      carbohydrates: false,
+      protein: false,
+      quantity: false,
+    })),
+  });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+  });
   useEffect(() => {
     const loadIngredients = async () => {
       const fetchedIngredients = await fetchIngredients();
@@ -44,7 +86,18 @@ const RecipeEditForm = ({ ricetta }) => {
 
     loadIngredients();
   }, []);
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+  const handleDeleteRecipe = async () => {
+    await deleteRecipt(formData.id);
+    // ...
+    handleCloseDialog();
+  };
   useEffect(() => {
     if (ricetta?.id !== formData.id) {
       setFormData({
@@ -127,7 +180,33 @@ const RecipeEditForm = ({ ricetta }) => {
     setFormData({ ...formData, [name]: value });
     console.log(formData);
   };
+  const validateForm = () => {
+    let isValid = true;
 
+    const errors = {
+      name: !formData.name,
+      description: !formData.description,
+      directions: !formData.directions,
+      ingredients: formData.ingredients.map((ingredient) => ({
+        name: !ingredient.name,
+        calories: !ingredient.calories,
+        fat: !ingredient.fat,
+        carbohydrates: !ingredient.carbohydrates,
+        protein: !ingredient.protein,
+        quantity: !ingredient.quantity,
+      })),
+    };
+
+    // Verifica se ci sono errori nei campi degli ingredienti
+    errors.ingredients.forEach((ingredientErrors) => {
+      if (Object.values(ingredientErrors).some((e) => e)) {
+        isValid = false;
+      }
+    });
+
+    setFormErrors(errors);
+    return isValid;
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     // Qui puoi gestire il salvataggio dei dati, ad esempio inviando una richiesta al server
@@ -139,6 +218,8 @@ const RecipeEditForm = ({ ricetta }) => {
       <Box component="form" onSubmit={handleSubmit}>
         <TextField
           fullWidth
+          error={formErrors.name}
+          helperText={formErrors.name && "Il nome della ricetta è obbligatorio"}
           margin="normal"
           label="Nome Ricetta"
           name="name"
@@ -148,6 +229,11 @@ const RecipeEditForm = ({ ricetta }) => {
         <TextField
           fullWidth
           margin="normal"
+          error={formErrors.description}
+          helperText={
+            formErrors.description &&
+            "La descrizione della ricetta e obbligatoriea"
+          }
           label="Descrizione"
           name="description"
           value={formData.description}
@@ -159,6 +245,8 @@ const RecipeEditForm = ({ ricetta }) => {
           fullWidth
           margin="normal"
           label="Passaggi"
+          error={formErrors.directions}
+          helperText={formErrors.directions && "I passaggi sono obbligatori"}
           name="directions"
           value={formData.directions}
           onChange={handleChange}
@@ -192,28 +280,38 @@ const RecipeEditForm = ({ ricetta }) => {
                     ...ingredient,
                     name: newValue,
                   });
-                } else if (typeof newValue === "object" && newValue !== null) {
-                  // Gestisce la selezione dall'elenco
+                } else if (newValue && newValue.id) {
+                  // Gestisce la selezione dall'elenco usando l'ID come chiave
                   handleIngredientChange(index, newValue);
                 }
               }}
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  error={formErrors.ingredients[index].name}
+                  helperText={
+                    formErrors.ingredients[index].name &&
+                    "Il nome dell'ingrediente è obbligatorio"
+                  }
+                  label="Ingredients"
                   onChange={(e) =>
                     handleIngredientChange(index, {
                       ...ingredient,
                       name: e.target.value,
                     })
                   }
-                  label="Ingredients"
                 />
               )}
-              sx={{ mr: 1, width: "15%" }}
+              sx={{ mr: 1, width: isMobile ? "68%" : "15%" }}
             />
             <TextField
               label="Calorie"
               name="calories"
+              error={formErrors.ingredients[index].calories}
+              helperText={
+                formErrors.ingredients[index].calories &&
+                "Le calorie sono obbligatorie"
+              }
               value={ingredient.calories || ""}
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -226,6 +324,10 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Grassi"
               name="fat"
+              error={formErrors.ingredients[index].fat}
+              helperText={
+                formErrors.ingredients[index].fat && "I grassi sono obbligatori"
+              }
               value={ingredient.fat || ""}
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -238,6 +340,11 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Carboidrati"
               name="carbohydrates"
+              error={formErrors.ingredients[index].carbohydrates}
+              helperText={
+                formErrors.ingredients[index].carbohydrates &&
+                "I carboidrati sono obbligatori"
+              }
               value={ingredient.carbohydrates || ""}
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -250,6 +357,11 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Proteine"
               name="protein"
+              error={formErrors.ingredients[index].protein}
+              helperText={
+                formErrors.ingredients[index].protein &&
+                "Le proteine sono obbligatorie"
+              }
               value={ingredient.protein || ""}
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -262,6 +374,11 @@ const RecipeEditForm = ({ ricetta }) => {
             <TextField
               label="Quantità"
               name="quantity"
+              error={formErrors.ingredients[index].quantity}
+              helperText={
+                formErrors.ingredients[index].quantity &&
+                "La quantità è obbligatoria"
+              }
               value={ingredient.quantity || ""}
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -284,6 +401,34 @@ const RecipeEditForm = ({ ricetta }) => {
           Salva
         </Button>
       </Box>
+      {formData.id !== -1 && (
+        <Button variant="outlined" color="secondary" onClick={handleOpenDialog}>
+          Elimina Ricetta
+        </Button>
+      )}
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Conferma Eliminazione</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Sei sicuro di voler eliminare questa ricetta?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Annulla
+          </Button>
+          <Button onClick={handleDeleteRecipe} color="secondary">
+            Elimina
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        message={snackbar.message}
+      />
     </Paper>
   );
 };
