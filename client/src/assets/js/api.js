@@ -3,7 +3,7 @@ import axios from "axios";
 const axiosInstance = axios.create({
   baseURL: "https://bookrecip-e5a5d3bc5103.herokuapp.com",
 });
-
+/*
 axiosInstance.interceptors.request.use(
   (config) => {
     const excludeUrls = ["/api/auth/login", "/api/users"];
@@ -23,6 +23,6 @@ axiosInstance.interceptors.request.use(
   (error) => {
     return Promise.reject(error);
   }
-);
+);*/
 
 export default axiosInstance;
