@@ -1,11 +1,18 @@
 const Recipe = require("../models/recipes.model"); // Import Recipe Model
 const { Sequelize } = require("sequelize");
 const Ingredient = require("../models/ingredients.model");
+const fs = require("fs");
 exports.createRecipe = async (req, res) => {
   try {
     // Read data from recipe input (req.body)
-    const { name, image_path, description, directions } = req.body;
-
+    const { name, description, directions } = req.body;
+    let image_path = null;
+    if (req.file) {
+      // Qui puoi salvare il percorso del nuovo file immagine
+      image_path = "/images/" + req.file.filename;
+    } else {
+      return res.status(404).json({ error: "Image not found." });
+    }
     // Create a new recipe in the database
     const newRecipe = await Recipe.create({
       name,
@@ -60,9 +67,23 @@ exports.updateRecipe = async (req, res) => {
     if (updates.name) {
       recipe.name = updates.name;
     }
-    if (updates.image_path) {
-      recipe.surname = updates.surname;
+
+    if (req.file) {
+      // Qui puoi salvare il percorso del nuovo file immagine
+      if (recipe.image_path) {
+        const existingImagePath = "../client/public" + recipe.image_path;
+        console.log(existingImagePath);
+        fs.unlink(existingImagePath, (err) => {
+          if (err) {
+            console.error("Failed to delete existing image:", err);
+            // Considera se vuoi gestire l'errore in modo specifico
+          }
+        });
+      }
+      const image_path = "/images/recpitImages/" + req.file.filename;
+      recipe.image_path = image_path;
     }
+
     if (updates.description) {
       recipe.description = updates.description;
     }
@@ -83,6 +104,20 @@ exports.deleteRecipe = async (req, res) => {
     const recipe = await Recipe.findByPk(req.params.id);
     if (!recipe) {
       return res.status(404).json({ error: "Recipe not found." });
+    }
+    try {
+      if (recipe.image_path) {
+        const existingImagePath = "../client/public" + recipe.image_path;
+        console.log(existingImagePath);
+        fs.unlink(existingImagePath, (err) => {
+          if (err) {
+            console.error("Failed to delete existing image:", err);
+            // Considera se vuoi gestire l'errore in modo specifico
+          }
+        });
+      }
+    } catch (error) {
+      console.log("error during delete " + error);
     }
     const deletedRecipe = await recipe.destroy();
     res.status(200).json(deletedRecipe);

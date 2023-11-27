@@ -26,8 +26,17 @@ router.post("/login", (req, res, next) => {
         expiresIn: "1h",
       }
     );
-    console.log("Generated Token:", token);
-    return res.json({ success: true, token, user });
+    const userForFrontend = {
+      id: user.id,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      role: user.role,
+    };
+
+    return res.json({ success: true, token, user: userForFrontend });
   })(req, res, next);
 });
 

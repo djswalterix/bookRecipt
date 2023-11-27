@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../assets/js/api";
 const initialState = {
   isAuthenticated: localStorage.getItem("token") ? true : false, // Inizialmente l'utente non è autenticato
+  role: localStorage.getItem("role") || null, // Prendi il ruolo dal localStorage
 };
 
 import axios from "axios";
@@ -27,17 +28,22 @@ const authSlice = createSlice({
   reducers: {
     setUserLoggedIn: (state, action) => {
       state.isAuthenticated = action.payload;
+      localStorage.removeItem("expirationTime");
     },
     loginSuccess: (state, action) => {
       state.isAuthenticated = true;
       state.user = action.payload.user;
+      state.role = action.payload.user.role;
       //state.role = action.payload.role;
       // aggiungi altri aggiornamenti di stato necessari
     },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
-      //state.role = null;
+      state.role = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("role"); // Aggiungi questa riga
+      // Altre pulizie necessarie
     },
     // i tuoi reducer sincroni qui
   },
@@ -49,6 +55,9 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload.user;
+        state.role = action.payload.user.role;
+        localStorage.setItem("role", action.payload.user.role); // Aggiungi questa riga
+        localStorage.setItem("token", action.payload.token); // Assicurati che il token sia salvato
         state.loading = false;
       })
       .addCase(login.rejected, (state, action) => {

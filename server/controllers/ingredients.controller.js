@@ -65,7 +65,7 @@ exports.updateIngredient = async (req, res) => {
       ingredient.calories = updates.calories;
     }
     if (updates.protein) {
-      ingredient.surname = updates.surname;
+      ingredient.protein = updates.protein;
     }
     if (updates.fat) {
       ingredient.fat = updates.fat;
