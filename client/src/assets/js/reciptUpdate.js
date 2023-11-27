@@ -13,14 +13,13 @@ function isIngredientInArray(array, ingredientToCheck) {
       element.protein === ingredientToCheck.protein
     // Aggiungi altre proprietà se necessario
   );
-}
-const createReciptApi = async (recipt) => {
+} /*
+const createReciptApi = async (recipt, image) => {
   const token = localStorage.getItem("token");
   const response = await axiosInstance.post(
     "/api/recipes/",
     {
       name: recipt.name,
-      image_path: "default",
       description: recipt.description,
       directions: recipt.directions,
     },
@@ -30,6 +29,32 @@ const createReciptApi = async (recipt) => {
       },
     }
   );
+  return response.data.id;
+};*/
+const createReciptApi = async (recipt, image) => {
+  const token = localStorage.getItem("token");
+
+  // Crea un nuovo oggetto FormData
+  const formData = new FormData();
+  formData.append("name", recipt.name);
+  formData.append("description", recipt.description);
+  formData.append("directions", recipt.directions);
+
+  // Aggiungi l'immagine, se presente
+  if (image) {
+    formData.append("image", image);
+  }
+
+  // Assicurati di rimuovere il content-type dal header in modo che il browser possa settarlo automaticamente
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": undefined, // Importante per il caricamento del file
+    },
+  };
+
+  const response = await axiosInstance.post("/api/recipes/", formData, config);
+
   return response.data.id;
 };
 const createingredientApi = async (ingredient) => {
@@ -52,22 +77,36 @@ const createingredientApi = async (ingredient) => {
   return response.data.id;
 };
 
-const updateReciptApi = async (recipt) => {
+const updateReciptApi = async (recipt, image) => {
   const token = localStorage.getItem("token");
+
+  // Crea un nuovo oggetto FormData
+  const formData = new FormData();
+  formData.append("name", recipt.name);
+  formData.append("description", recipt.description);
+  formData.append("directions", recipt.directions);
+
+  // Aggiungi l'immagine, se presente
+  if (image) {
+    formData.append("image", image);
+  }
+
+  // Configurazione della richiesta con l'header per l'autenticazione
+  // Non impostare manualmente il Content-Type per FormData
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      // Non impostare "Content-Type" quando si usa FormData
+      // Lascia che sia il browser a farlo in modo automatico
+    },
+  };
+
   const response = await axiosInstance.put(
     `/api/recipes/${recipt.id}`,
-    {
-      name: recipt.name,
-      image_path: "default",
-      description: recipt.description,
-      directions: recipt.directions,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    formData,
+    config
   );
+
   return response.data;
 };
 const deleteReciptApi = async (reciptId) => {
@@ -183,16 +222,16 @@ const deleteAllfromRecipesIngredientApi = async (reciptId) => {
   return response.data;
 };
 
-async function updateRecipt(form, listIngredients, oldRecipt) {
+async function updateRecipt(form, image, listIngredients, oldRecipt) {
   let newIngredients = [];
 
   console.log(form);
   if (form.id >= 0) {
-    await updateReciptApi(form);
+    await updateReciptApi(form, image);
     console.log("upd recipt");
   } else {
     console.log("new recipt");
-    let newRecipt = await createReciptApi(form);
+    let newRecipt = await createReciptApi(form, image);
     console.log("new rec " + newRecipt);
     form.id = newRecipt;
     console.log("new id " + form.id);

@@ -109,6 +109,7 @@ exports.updateRecipeIngredientByRecipeId = async (req, res) => {
     handleErrors(error, res);
   }
 };
+
 exports.deleteRecipeIngredientbyId = async (req, res) => {
   try {
     //console.log(req.params.id);

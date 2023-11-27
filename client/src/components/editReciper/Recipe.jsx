@@ -24,7 +24,7 @@ const RecipeEditForm = ({ ricetta }) => {
   const onSave = async () => {
     if (validateForm()) {
       try {
-        await updateRecipt(formData, ingredientsList, ricetta);
+        await updateRecipt(formData, image, ingredientsList, ricetta);
         setSnackbar({ open: true, message: "Ricetta salvata con successo!" });
         setTimeout(() => {
           window.location.reload();
@@ -78,6 +78,11 @@ const RecipeEditForm = ({ ricetta }) => {
     open: false,
     message: "",
   });
+  const [image, setImage] = useState(null);
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
   useEffect(() => {
     const loadIngredients = async () => {
       const fetchedIngredients = await fetchIngredients();
@@ -209,6 +214,7 @@ const RecipeEditForm = ({ ricetta }) => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
+
     // Qui puoi gestire il salvataggio dei dati, ad esempio inviando una richiesta al server
     onSave(formData);
   };
@@ -396,6 +402,7 @@ const RecipeEditForm = ({ ricetta }) => {
         <Button startIcon={<AddCircleIcon />} onClick={addIngredient}>
           Aggiungi Ingrediente
         </Button>
+        <input type="file" onChange={handleImageChange} />
         {/* Aggiungi altri campi come necessario */}
         <Button type="submit" variant="contained" sx={{ mt: 2 }}>
           Salva

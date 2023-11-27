@@ -4,8 +4,14 @@ const Ingredient = require("../models/ingredients.model");
 exports.createRecipe = async (req, res) => {
   try {
     // Read data from recipe input (req.body)
-    const { name, image_path, description, directions } = req.body;
-
+    const { name, description, directions } = req.body;
+    let image_path = null;
+    if (req.file) {
+      // Qui puoi salvare il percorso del nuovo file immagine
+      image_path = "/images/" + req.file.filename;
+    } else {
+      return res.status(404).json({ error: "Image not found." });
+    }
     // Create a new recipe in the database
     const newRecipe = await Recipe.create({
       name,
@@ -60,9 +66,13 @@ exports.updateRecipe = async (req, res) => {
     if (updates.name) {
       recipe.name = updates.name;
     }
-    if (updates.image_path) {
-      recipe.surname = updates.surname;
+
+    if (req.file) {
+      // Qui puoi salvare il percorso del nuovo file immagine
+      const image_path = "/images/" + req.file.filename;
+      recipe.image_path = image_path;
     }
+
     if (updates.description) {
       recipe.description = updates.description;
     }
