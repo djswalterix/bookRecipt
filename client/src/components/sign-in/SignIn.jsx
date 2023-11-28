@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+// Importing necessary Material-UI components
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  Link,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  CircularProgress,
+} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+// Importing Redux functionalities
+import { useSelector, useDispatch } from "react-redux";
 import { login, setUserLoggedIn } from "../../redux/reducers/authSlice.reducer";
 import { useNavigate } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress";
-import { useSelector, useDispatch } from "react-redux";
+
+// Copyright component for the footer
 function Copyright(props) {
   return (
     <Typography
@@ -34,59 +40,57 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
+const defaultTheme = createTheme(); // Default theme creation for Material-UI
 
 export default function SignIn() {
-  const [errorMessage, setErrorMessage] = useState(""); // Aggiungi uno stato per il messaggio di errore
+  const [errorMessage, setErrorMessage] = useState(""); // State for handling error messages
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const loading = useSelector((state) => state.auth.loading);
   const error = useSelector((state) => state.auth.error);
-  // Effetto per controllare se l'autenticazione ha avuto successo
+
+  // Effect hook to navigate to home page upon successful authentication
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/"); // Cambia '/' con il percorso della tua home page se è diverso
+      navigate("/"); // Redirect to home page if authenticated
     }
   }, [isAuthenticated, navigate]);
 
+  // Handler for form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
+
+    // Basic validation for email and password
     if (!email.includes("@") || password.length < 6) {
       setErrorMessage("Email o password non validi");
-
       return;
     }
-    console.log(email);
-    dispatch(
-      login({
-        email: data.get("email"),
-        password: data.get("password"),
-      })
-    )
+
+    // Dispatching login action to Redux
+    dispatch(login({ email, password }))
       .then((response) => {
+        // Post-login actions
         if (response.payload && response.payload.token) {
-          const expirationTime = new Date(new Date().getTime() + 3600 * 1000); // 1 ora da ora
-          localStorage.setItem("token", response.payload.token); // Salvare il token
-          localStorage.setItem("role", action.payload.user.role);
+          // Token storage and additional setup
+          localStorage.setItem("token", response.payload.token);
+          localStorage.setItem("role", response.payload.user.role);
           localStorage.setItem("tokenTimestamp", Date.now());
-          dispatch(setUserLoggedIn(true)); // Aggiornare lo stato di Redux
-          // Altre azioni post-login
+          dispatch(setUserLoggedIn(true));
         } else {
-          throw new Error("errore durante il login");
+          throw new Error("Errore durante il login");
         }
       })
       .catch((error) => {
-        setErrorMessage("Errore durante il login"); // Gestione degli errori
+        setErrorMessage("Errore durante il login"); // Error handling
       });
   };
 
+  // JSX for rendering the login form
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -115,6 +119,7 @@ export default function SignIn() {
             noValidate
             sx={{ mt: 1 }}
           >
+            {/* Form fields for email and password */}
             <TextField
               margin="normal"
               required

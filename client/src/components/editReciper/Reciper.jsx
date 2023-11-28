@@ -1,74 +1,77 @@
 import React, { useState, useEffect } from "react";
-//import { fetchReciptAndIngredients } from "../../assets/js/RecipeFetch";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchReciptAndIngredients } from "../../redux/actions/recipesActions";
 import {
   Box,
   Drawer,
   List,
-  ListItem,
   ListItemText,
   ListItemButton,
   Typography,
   IconButton,
+  TextField,
   useTheme,
   useMediaQuery,
-  TextField,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import Recipe from "./Recipe";
-import { useDispatch, useSelector } from "react-redux";
+
 const drawerWidth = 240;
 
 const Ricettario = () => {
   const dispatch = useDispatch();
-  const ricetteDalStore = useSelector((state) => state.recipes.data);
-  const [ricettaSelezionata, setRicettaSelezionata] = useState(null);
-  const [ricetteFiltrate, setRicetteFiltrate] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const ricetteDalStore = useSelector((state) => state.recipes.data); // Retrieve recipes from Redux store
+  const [ricettaSelezionata, setRicettaSelezionata] = useState(null); // State for selected recipe
+  const [ricetteFiltrate, setRicetteFiltrate] = useState([]); // State for filtered recipes
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [mobileOpen, setMobileOpen] = useState(false); // State for mobile drawer visibility
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Usa un breakpoint appropriato
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Media query for mobile responsiveness
 
-  // Caricamento delle ricette dal backend
+  // Fetching recipes from backend on component mount
   useEffect(() => {
     dispatch(fetchReciptAndIngredients());
   }, [dispatch]);
 
+  // Filtering recipes based on search query
   useEffect(() => {
-    // Filtrazione basata sullo stato delle ricette recuperate dal Redux store
-    if (searchQuery) {
-      const searchTerms = searchQuery
-        .split(",")
-        .map((term) => term.trim().toLowerCase());
-      const filtered = ricetteDalStore.filter((ricetta) =>
-        searchTerms.some(
-          (term) =>
-            term === "" ||
-            ricetta.name.toLowerCase().includes(term) ||
-            (ricetta.Ingredients &&
-              ricetta.Ingredients.some((ing) =>
-                ing.name.toLowerCase().includes(term)
-              ))
-        )
-      );
-      setRicetteFiltrate(filtered);
-    } else {
-      setRicetteFiltrate(ricetteDalStore);
-    }
+    const searchTerms = searchQuery
+      .split(",")
+      .map((term) => term.trim().toLowerCase());
+    const filtered = ricetteDalStore.filter((ricetta) =>
+      searchTerms.some(
+        (term) =>
+          term === "" ||
+          ricetta.name.toLowerCase().includes(term) ||
+          (ricetta.Ingredients &&
+            ricetta.Ingredients.some((ing) =>
+              ing.name.toLowerCase().includes(term)
+            ))
+      )
+    );
+    setRicetteFiltrate(filtered);
   }, [searchQuery, ricetteDalStore]);
 
+  // Function to select a recipe
   const selezionaRicetta = (ricetta) => {
     setRicettaSelezionata(ricetta);
   };
+
+  // Function to toggle mobile drawer
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  // Function to handle search input change
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+
+  // Rendering the component
   return (
     <Box sx={{ display: "flex" }}>
+      {/* Mobile menu button */}
       <IconButton
         color="inherit"
         aria-label="open drawer"
@@ -82,10 +85,11 @@ const Ricettario = () => {
           top: "50%",
           left: "1vh",
           display: { md: "none", sm: "content" },
-        }} // Nasconde il pulsante su schermi più grandi di 'sm'
+        }}
       >
         <MenuIcon />
       </IconButton>
+      {/* Drawer for recipe list */}
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? mobileOpen : true}
@@ -98,16 +102,9 @@ const Ricettario = () => {
             boxSizing: "border-box",
           },
         }}
-        ModalProps={{
-          keepMounted: true, // Migliore esperienza utente su dispositivi mobili
-        }}
+        ModalProps={{ keepMounted: true }}
       >
-        <Typography
-          variant="h6"
-          sx={{
-            paddingLeft: "1vh",
-          }}
-        >
+        <Typography variant="h6" sx={{ paddingLeft: "1vh" }}>
           Ricette
         </Typography>
         <Box sx={{ padding: "16px" }}>
@@ -115,38 +112,33 @@ const Ricettario = () => {
             fullWidth
             variant="outlined"
             placeholder="Cerca ricette"
-            InputProps={{
-              endAdornment: <SearchIcon />,
-            }}
+            InputProps={{ endAdornment: <SearchIcon /> }}
             value={searchQuery}
             onChange={handleSearchChange}
           />
         </Box>
+        {/* List of recipes */}
         <List>
           <ListItemButton
             key={-1}
             onClick={() => selezionaRicetta(null)}
-            sx={{
-              color: "blue",
-            }}
+            sx={{ color: "blue" }}
           >
             Nuova Ricetta
           </ListItemButton>
           {ricetteFiltrate.map((ricetta, index) => (
             <ListItemButton
-              sx={{
-                color: "gray",
-              }}
               key={ricetta.id}
               onClick={() => selezionaRicetta(ricetta)}
+              sx={{ color: "gray" }}
             >
               <ListItemText primary={ricetta.name} />
             </ListItemButton>
           ))}
         </List>
       </Drawer>
+      {/* Main content area displaying the selected recipe */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {/* Qui andrebbe il componente che mostra i dettagli della ricetta */}
         <Recipe ricetta={ricettaSelezionata} />
       </Box>
     </Box>
