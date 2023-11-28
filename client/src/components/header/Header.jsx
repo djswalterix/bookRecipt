@@ -1,41 +1,45 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   logout,
   setUserLoggedIn,
 } from "../../redux/reducers/authSlice.reducer";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Drawer,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Drawer from "@mui/material/Drawer";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useNavigate } from "react-router-dom";
 
 function Header() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [drawerOpen, setDrawerOpen] = useState(false); // State for controlling the drawer's visibility
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Redux state for authentication status
+  const userRole = useSelector((state) => state.auth.role); // Redux state for user role
   const dispatch = useDispatch();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Breakpoint for mobile responsiveness
   const navigate = useNavigate();
-  //const userRole = useSelector((state) => state.auth.user.role); // Accedi al ruolo dell'utente
-  const userRole = useSelector((state) => state.auth.role);
+
+  // Handler for navigating to edit recipes page
   const handleEditRecipeBook = () => {
-    // Naviga verso la pagina o il componente per la modifica delle ricette
     navigate("/edit-recipe-book");
   };
+
+  // Handler for logging out
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("token"); // Rimuovere il token
-    dispatch(setUserLoggedIn(false)); // Aggiornare lo stato di Redux
-    navigate("/sign-in"); // Reindirizza alla pagina di login o alla home
+    localStorage.removeItem("token"); // Remove the token from local storage
+    dispatch(setUserLoggedIn(false)); // Update Redux state
+    navigate("/sign-in"); // Redirect to sign-in page
   };
 
+  // Drawer content
   const drawer = (
     <div onClick={() => setDrawerOpen(false)}>
       <Button
@@ -48,17 +52,17 @@ function Header() {
       </Button>
       <Button
         color="inherit"
-        sx={{ display: "block" }}
         component={RouterLink}
         to="/reciper"
+        sx={{ display: "block" }}
       >
         Ricettario
       </Button>
       {userRole === "admin" && (
         <Button
           color="inherit"
-          sx={{ display: "block" }}
           onClick={handleEditRecipeBook}
+          sx={{ display: "block" }}
         >
           Modifica Ricettario
         </Button>
@@ -68,20 +72,19 @@ function Header() {
           Esci
         </Button>
       ) : (
-        <>
-          <Button
-            color="inherit"
-            component={RouterLink}
-            to="/sign-in"
-            sx={{ display: "block" }}
-          >
-            Accedi
-          </Button>
-        </>
+        <Button
+          color="inherit"
+          component={RouterLink}
+          to="/sign-in"
+          sx={{ display: "block" }}
+        >
+          Accedi
+        </Button>
       )}
     </div>
   );
 
+  // Rendering the header component
   return (
     <AppBar position="static">
       <Toolbar>
@@ -124,11 +127,9 @@ function Header() {
                 Logout
               </Button>
             ) : (
-              <>
-                <Button color="inherit" component={RouterLink} to="/sign-in">
-                  Sign In
-                </Button>
-              </>
+              <Button color="inherit" component={RouterLink} to="/sign-in">
+                Sign In
+              </Button>
             )}
           </div>
         )}

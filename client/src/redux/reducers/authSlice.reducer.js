@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../assets/js/api";
-const initialState = {
-  isAuthenticated: localStorage.getItem("token") ? true : false, // Inizialmente l'utente non è autenticato
-  role: localStorage.getItem("role") || null, // Prendi il ruolo dal localStorage
-};
 
-import axios from "axios";
+// Initial state with authentication status and user role
+const initialState = {
+  isAuthenticated: !!localStorage.getItem("token"), // Initially, the user is not authenticated
+  role: localStorage.getItem("role") || null, // Retrieve the role from localStorage
+};
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -28,24 +28,23 @@ const authSlice = createSlice({
   reducers: {
     setUserLoggedIn: (state, action) => {
       state.isAuthenticated = action.payload;
-      localStorage.removeItem("expirationTime");
+      localStorage.removeItem("expirationTime"); // Remove expiration time from localStorage
     },
     loginSuccess: (state, action) => {
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.role = action.payload.user.role;
-      //state.role = action.payload.role;
-      // aggiungi altri aggiornamenti di stato necessari
+      // Additional state updates as needed
     },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
       state.role = null;
       localStorage.removeItem("token");
-      localStorage.removeItem("role"); // Aggiungi questa riga
-      // Altre pulizie necessarie
+      localStorage.removeItem("role"); // Add this line
+      // Additional cleanup as necessary
     },
-    // i tuoi reducer sincroni qui
+    // Your synchronous reducers here
   },
   extraReducers: (builder) => {
     builder
@@ -56,8 +55,8 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.role = action.payload.user.role;
-        localStorage.setItem("role", action.payload.user.role); // Aggiungi questa riga
-        localStorage.setItem("token", action.payload.token); // Assicurati che il token sia salvato
+        localStorage.setItem("role", action.payload.user.role); // Add this line
+        localStorage.setItem("token", action.payload.token); // Ensure the token is saved
         state.loading = false;
       })
       .addCase(login.rejected, (state, action) => {
@@ -69,34 +68,3 @@ const authSlice = createSlice({
 
 export const { loginSuccess, logout, setUserLoggedIn } = authSlice.actions;
 export default authSlice.reducer;
-
-/*
-const initialState = {
-  query: "",
-  apiCache: {},
-};
-
-const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "SET_QUERY":
-      return { ...state, query: action.payload };
-    case "ADD_TO_CACHE":
-      return {
-        ...state,
-        apiCache: {
-          ...state.apiCache,
-          [action.key]: action.data,
-        },
-      };
-    case "GET_FROM_CACHE":
-      return {
-        ...state,
-      };
-
-    default:
-      return state;
-  }
-};
-
-export default rootReducer;
-*/

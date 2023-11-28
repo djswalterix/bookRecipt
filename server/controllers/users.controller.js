@@ -52,7 +52,7 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserByEmail = async (req, res) => {
   console.log("find by email");
   try {
-    const { email } = req.params.toLowerCase();
+    const email = req.params.email.toLowerCase();
     const user = await User.findByEmail(email);
 
     if (!user) {

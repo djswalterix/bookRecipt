@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./api";
 
+// Checks if a given ingredient is in an array of ingredients
 function isIngredientInArray(array, ingredientToCheck) {
   console.log(array);
   console.log(ingredientToCheck);
@@ -11,52 +12,30 @@ function isIngredientInArray(array, ingredientToCheck) {
       element.fat === ingredientToCheck.fat &&
       element.carbohydrates === ingredientToCheck.carbohydrates &&
       element.protein === ingredientToCheck.protein
-    // Aggiungi altre proprietà se necessario
   );
-} /*
-const createReciptApi = async (recipt, image) => {
-  const token = localStorage.getItem("token");
-  const response = await axiosInstance.post(
-    "/api/recipes/",
-    {
-      name: recipt.name,
-      description: recipt.description,
-      directions: recipt.directions,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return response.data.id;
-};*/
-const createReciptApi = async (recipt, image) => {
-  const token = localStorage.getItem("token");
+}
 
-  // Crea un nuovo oggetto FormData
+// Creates a new recipe using the API
+const createReciptApi = async (recipt, image) => {
+  const token = localStorage.getItem("token");
   const formData = new FormData();
   formData.append("name", recipt.name);
   formData.append("description", recipt.description);
   formData.append("directions", recipt.directions);
-
-  // Aggiungi l'immagine, se presente
   if (image) {
     formData.append("image", image);
   }
-
-  // Assicurati di rimuovere il content-type dal header in modo che il browser possa settarlo automaticamente
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": undefined, // Importante per il caricamento del file
+      "Content-Type": undefined,
     },
   };
-
   const response = await axiosInstance.post("/api/recipes/", formData, config);
-
   return response.data.id;
 };
+
+// Creates a new ingredient using the API
 const createingredientApi = async (ingredient) => {
   const token = localStorage.getItem("token");
   const response = await axiosInstance.post(
@@ -77,51 +56,41 @@ const createingredientApi = async (ingredient) => {
   return response.data.id;
 };
 
+// Updates a recipe using the API
 const updateReciptApi = async (recipt, image) => {
   const token = localStorage.getItem("token");
-
-  // Crea un nuovo oggetto FormData
   const formData = new FormData();
   formData.append("name", recipt.name);
   formData.append("description", recipt.description);
   formData.append("directions", recipt.directions);
-
-  // Aggiungi l'immagine, se presente
   if (image) {
     formData.append("image", image);
   }
-
-  // Configurazione della richiesta con l'header per l'autenticazione
-  // Non impostare manualmente il Content-Type per FormData
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
-      // Non impostare "Content-Type" quando si usa FormData
-      // Lascia che sia il browser a farlo in modo automatico
     },
   };
-
   const response = await axiosInstance.put(
     `/api/recipes/${recipt.id}`,
     formData,
     config
   );
-
   return response.data;
 };
+
+// Deletes a recipe using the API
 const deleteReciptApi = async (reciptId) => {
   const token = localStorage.getItem("token");
-  const response = await axiosInstance.delete(
-    `/api/recipes/${reciptId}`,
-
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await axiosInstance.delete(`/api/recipes/${reciptId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
+
+// Updates an ingredient using the API
 const updateIngredientApi = async (ingredient) => {
   const token = localStorage.getItem("token");
   const response = await axiosInstance.put(
@@ -142,6 +111,8 @@ const updateIngredientApi = async (ingredient) => {
   console.log(response.data);
   return response.data;
 };
+
+// Links a recipe and ingredient in the database
 const linkRecipesIngredientsApi = async (reciptId, ingredient) => {
   const token = localStorage.getItem("token");
   const response = await axiosInstance.post(
@@ -159,6 +130,8 @@ const linkRecipesIngredientsApi = async (reciptId, ingredient) => {
   );
   return response.data.id;
 };
+
+// Updates the quantity of an ingredient in a recipe
 const updQuantityApi = async (ingredient, reciptId) => {
   const token = localStorage.getItem("token");
   const response = await axiosInstance.put(
@@ -177,29 +150,25 @@ const updQuantityApi = async (ingredient, reciptId) => {
   return response.data.id;
 };
 
+// Gets the quantity of an ingredient by its ID in a recipe
 function getIngredientQuantityById(recipe, ingredientId) {
   if (recipe == null) {
     return null;
   }
-  // Trova l'ingrediente con l'ID specificato
   const ingredient = recipe.Ingredients.find((ing) => ing.id === ingredientId);
-
-  // Se l'ingrediente è trovato e ha un campo RecipeIngredient, restituisci la quantity
   if (ingredient && ingredient.RecipeIngredient) {
     return ingredient.RecipeIngredient.quantity;
   } else {
-    return null; // Restituisce null se l'ingrediente non è trovato o non ha un campo RecipeIngredient
+    return null;
   }
 }
+
+// Deletes a specific ingredient from a recipe
 const deletefromRecipesIngredientApi = async (reciptId, ingredientId) => {
   const token = localStorage.getItem("token");
   console.log(token);
   const response = await axiosInstance.delete(
     `/api/recipesIngredients/recipe/?RecipeId=${reciptId}&IngredientId=${ingredientId}`,
-    /*{
-      RecipeId: reciptId,
-      IngredientId: ingredientId,
-    },*/
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -208,6 +177,8 @@ const deletefromRecipesIngredientApi = async (reciptId, ingredientId) => {
   );
   return response.data;
 };
+
+// Deletes all ingredients from a recipe
 const deleteAllfromRecipesIngredientApi = async (reciptId) => {
   const token = localStorage.getItem("token");
   console.log(token);
@@ -222,9 +193,9 @@ const deleteAllfromRecipesIngredientApi = async (reciptId) => {
   return response.data;
 };
 
+// Main function to update or create a recipe, handling ingredients as well
 async function updateRecipt(form, image, listIngredients, oldRecipt) {
   let newIngredients = [];
-
   console.log(form);
   if (form.id >= 0) {
     await updateReciptApi(form, image);
@@ -235,7 +206,6 @@ async function updateRecipt(form, image, listIngredients, oldRecipt) {
     console.log("new rec " + newRecipt);
     form.id = newRecipt;
     console.log("new id " + form.id);
-    //new recipt
   }
   console.log(listIngredients);
   for (let ingredient of form.ingredients) {
@@ -244,13 +214,10 @@ async function updateRecipt(form, image, listIngredients, oldRecipt) {
       console.log("new ingredient " + ingredient.name);
       ingredient.id = await createingredientApi(ingredient);
       await linkRecipesIngredientsApi(form.id, ingredient);
-      //new ingredient
     } else if (!isIngredientInArray(listIngredients, ingredient)) {
-      //ingredients is in list!
       console.log("upd ingredient " + ingredient.name);
-      await updateIngredientApi(ingredient); ///////
+      await updateIngredientApi(ingredient);
       await updQuantityApi(ingredient, form.id);
-      //updIngredient
     } else if (
       getIngredientQuantityById(oldRecipt, ingredient.id) != ingredient.quantity
     ) {
@@ -261,7 +228,6 @@ async function updateRecipt(form, image, listIngredients, oldRecipt) {
     }
   }
   if (oldRecipt && oldRecipt.Ingredients) {
-    // Il resto del codice che utilizza oldRecipt
     const removedIngredients = oldRecipt.Ingredients.filter(
       (oldIng) => !form.ingredients.some((newIng) => newIng.id === oldIng.id)
     );
@@ -269,14 +235,14 @@ async function updateRecipt(form, image, listIngredients, oldRecipt) {
       await deletefromRecipesIngredientApi(form.id, ingredient.id);
     }
   }
-  //return false;
 }
 
+// Function to delete a recipe, handling associated ingredients
 async function deleteRecipt(recipe) {
   if (recipe.Ingredients && recipe.Ingredients.length > 0) {
     await deleteAllfromRecipesIngredientApi(recipe.id);
   }
-
   await deleteReciptApi(recipe.id);
 }
+
 export { updateRecipt, deleteRecipt };

@@ -22,32 +22,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { fetchIngredients } from "../../assets/js/dataFetch";
 import { updateRecipt, deleteRecipt } from "../../assets/js/reciptUpdate";
 const RecipeEditForm = ({ ricetta }) => {
-  const onSave = async () => {
-    if (validateForm()) {
-      setIsSaving(true); // Inizio del processo di salvataggio
-      try {
-        await updateRecipt(formData, image, ingredientsList, ricetta);
-        setSnackbar({ open: true, message: "Ricetta salvata con successo!" });
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000); // 2000 millisecondi = 2 secondi
-      } catch (error) {
-        setSnackbar({
-          open: true,
-          message: "Errore durante il salvataggio della ricetta.",
-        });
-      } finally {
-        setIsSaving(false); // Fine del processo di salvataggio
-      }
-    } else {
-      setSnackbar({
-        open: true,
-        message: "Errore: controlla i dati inseriti.",
-      });
-    }
-  };
-
-  //console.log(ingredientsList);
+  // State initialization
   const [isSaving, setIsSaving] = useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
@@ -84,6 +59,161 @@ const RecipeEditForm = ({ ricetta }) => {
     message: "",
   });
   const [image, setImage] = useState(null);
+  ////////////////////////////////////////////////////
+  // Responsive design with theme
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Ingredient change handler
+  const handleIngredientChange = (index, newValue) => {
+    console.log("handleIngredientChange", index, ":", newValue);
+
+    // Determine the type of the new value
+    const valueType = typeof newValue;
+
+    let newIngredient;
+
+    if (valueType === "undefined") {
+      // If newValue is undefined, keep the existing ingredient
+      newIngredient = formData.ingredients[index];
+    } else if (valueType === "object") {
+      // If newValue is an object, assume it's a selected ingredient from a list
+      newIngredient = newValue;
+    } else {
+      // Assume newValue is a manually entered string
+      newIngredient = {
+        name: newValue,
+        calories: "",
+        fat: "",
+        carbohydrates: "",
+        protein: "",
+        quantity: "",
+      };
+    }
+
+    // Update the specific ingredient in the ingredients array
+    const updatedIngredients = formData.ingredients.map((ingredient, i) =>
+      i === index ? newIngredient : ingredient
+    );
+
+    // Update the formData state with the new ingredients array
+    setFormData({ ...formData, ingredients: updatedIngredients });
+  };
+
+  // Add and remove ingredient functions
+  const addIngredient = () => {
+    setFormData({
+      ...formData,
+      ingredients: [
+        ...formData.ingredients,
+        {
+          name: "",
+          calories: "",
+          fat: "",
+          carbohydrates: "",
+          protein: "",
+          quantity: "",
+        },
+      ],
+    });
+  };
+  const removeIngredient = (index) => {
+    const newIngredients = formData.ingredients.filter((_, i) => i !== index);
+    setFormData({ ...formData, ingredients: newIngredients });
+  };
+
+  // Form data change handler
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Form validation function
+  const validateForm = () => {
+    let isValid = true;
+
+    // Constructing error object for each field
+    const errors = {
+      name: !formData.name.trim(),
+      description: !formData.description.trim(),
+      directions: !formData.directions.trim(),
+      ingredients: formData.ingredients.map((ingredient) => ({
+        name: typeof ingredient.name === "string" && !ingredient.name.trim(),
+        calories:
+          typeof ingredient.calories !== "string"
+            ? !ingredient.calories
+            : !ingredient.calories.trim(),
+        fat: typeof ingredient.fat === "string" && !ingredient.fat.trim(),
+        carbohydrates:
+          typeof ingredient.carbohydrates === "string" &&
+          !ingredient.carbohydrates.trim(),
+        protein:
+          typeof ingredient.protein === "string" && !ingredient.protein.trim(),
+        quantity:
+          typeof ingredient.quantity === "string" &&
+          !ingredient.quantity.trim(),
+      })),
+    };
+
+    // Checking for errors in the main fields
+    if (errors.name || errors.description || errors.directions) {
+      isValid = false;
+    }
+
+    // Checking for errors in ingredients
+    if (
+      errors.ingredients.some((ingredientErrors) =>
+        Object.values(ingredientErrors).some((e) => e)
+      )
+    ) {
+      isValid = false;
+    }
+
+    // Update the form errors state
+    setFormErrors(errors);
+    return isValid;
+  };
+
+  // Form submission handler
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  // Save function
+  const onSave = async () => {
+    // First, validate the form
+    if (validateForm()) {
+      setIsSaving(true); // Start the saving process
+      try {
+        // Attempt to update the recipe with the provided data
+        await updateRecipt(formData, image, ingredientsList, ricetta);
+        setSnackbar({ open: true, message: "Ricetta salvata con successo!" });
+
+        // Reload the page after 2 seconds to reflect changes
+        // Consider using more dynamic methods to update UI without reloading
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } catch (error) {
+        // Handle any errors during the save operation
+        setSnackbar({
+          open: true,
+          message: "Errore durante il salvataggio della ricetta.",
+        });
+      } finally {
+        setIsSaving(false); // End the saving process
+      }
+    } else {
+      // If validation fails, inform the user to check their input
+      setSnackbar({
+        open: true,
+        message: "Errore: controlla i dati inseriti.",
+      });
+    }
+  };
+  //////////////////////////////////////////////////
+  //console.log(ingredientsList);
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -105,24 +235,33 @@ const RecipeEditForm = ({ ricetta }) => {
   };
   const handleDeleteRecipe = async () => {
     try {
+      // Attempt to delete the recipe
       await deleteRecipt(formData);
       setSnackbar({
         open: true,
         message: "Ricetta eliminata con successo!",
       });
+
+      // Optionally reload the page or redirect the user
+      // Consider updating the UI without reloading for a smoother user experience
       setTimeout(() => {
-        window.location.reload(); // Opzionale: ricarica la pagina o reindirizza l'utente
-      }, 2000); // 2000 millisecondi = 2 secondi
+        window.location.reload();
+      }, 2000); // 2 seconds delay
     } catch (error) {
+      // Handle any errors that occur during deletion
       setSnackbar({
         open: true,
         message: "Errore durante l'eliminazione della ricetta.",
       });
+    } finally {
+      // Close the dialog irrespective of the outcome
+      handleCloseDialog();
     }
-    handleCloseDialog();
   };
   useEffect(() => {
+    // Check if the ricetta has changed
     if (ricetta?.id !== formData.id) {
+      // Map the ingredients if ricetta.Ingredients is an array, otherwise use a default structure
       const mappedIngredients = Array.isArray(ricetta?.Ingredients)
         ? ricetta.Ingredients.map((ing) => ({
             name: ing?.name || "",
@@ -143,6 +282,7 @@ const RecipeEditForm = ({ ricetta }) => {
             },
           ];
 
+      // Update formData with the new values from ricetta
       setFormData({
         id: ricetta?.id || -1,
         name: ricetta?.name || "",
@@ -152,95 +292,6 @@ const RecipeEditForm = ({ ricetta }) => {
       });
     }
   }, [ricetta]);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const handleIngredientChange = (index, newValue) => {
-    console.log("handleIngredientChange" + index + " : " + newValue);
-    let newIngredient;
-    if (typeof newValue === undefined) {
-      // Nuovo ingrediente inserito manualmente
-      newIngredient = {
-        name: newValue,
-        calories: "",
-        fat: "",
-        carbohydrates: "",
-        protein: "",
-        quantity: "",
-      };
-    } else if (typeof newValue === "object") {
-      // Ingrediente selezionato dall'elenco
-      newIngredient = newValue;
-    } else {
-      // Se newValue non è né una stringa né un oggetto, mantieni l'ingrediente come è
-      newIngredient = formData.ingredients[index];
-    }
-
-    const updatedIngredients = formData.ingredients.map((ingredient, i) =>
-      i === index ? newIngredient : ingredient
-    );
-
-    setFormData({ ...formData, ingredients: updatedIngredients });
-  };
-
-  const addIngredient = () => {
-    setFormData({
-      ...formData,
-      ingredients: [
-        ...formData.ingredients,
-        {
-          name: "",
-          calories: "",
-          fat: "",
-          carbohydrates: "",
-          protein: "",
-          quantity: "",
-        },
-      ],
-    });
-  };
-
-  const removeIngredient = (index) => {
-    const newIngredients = formData.ingredients.filter((_, i) => i !== index);
-    setFormData({ ...formData, ingredients: newIngredients });
-  };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    console.log(formData);
-  };
-  const validateForm = () => {
-    let isValid = true;
-
-    const errors = {
-      name: !formData.name,
-      description: !formData.description,
-      directions: !formData.directions,
-      ingredients: formData.ingredients.map((ingredient) => ({
-        name: !ingredient.name,
-        calories: !ingredient.calories,
-        fat: !ingredient.fat,
-        carbohydrates: !ingredient.carbohydrates,
-        protein: !ingredient.protein,
-        quantity: !ingredient.quantity,
-      })),
-    };
-
-    // Verifica se ci sono errori nei campi degli ingredienti
-    errors.ingredients.forEach((ingredientErrors) => {
-      if (Object.values(ingredientErrors).some((e) => e)) {
-        isValid = false;
-      }
-    });
-
-    setFormErrors(errors);
-    return isValid;
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Qui puoi gestire il salvataggio dei dati, ad esempio inviando una richiesta al server
-    onSave(formData);
-  };
 
   return (
     <Paper sx={{ padding: 3 }}>

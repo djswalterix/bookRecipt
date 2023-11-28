@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../assets/js/api";
-const initialState = {
-  registrationStatus: "idle",
-  loading: false, // Indica se una richiesta è in corso
-  error: null, // Eventuali errori durante le richieste
-};
 
-import axios from "axios";
+// Initial state for registration process
+const initialState = {
+  registrationStatus: "idle", // Indicates the status of the registration process
+  loading: false, // Indicates if a request is in progress
+  error: null, // Any errors during requests
+};
 
 export const register = createAsyncThunk(
   "auth/register",
@@ -20,14 +20,17 @@ export const register = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data); // Handle the error
     }
   }
 );
+
 const registrationSlice = createSlice({
   name: "registration",
   initialState,
-  reducers: {},
+  reducers: {
+    // Reducers for synchronous actions (if any)
+  },
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
@@ -37,12 +40,12 @@ const registrationSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.registrationStatus = "succeeded";
-        // Aggiungi qui qualsiasi altro aggiornamento di stato necessario
+        // Add any other necessary state updates here
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.registrationStatus = "failed";
-        state.error = action.payload; // Assicurati che il payload contenga l'errore
+        state.error = action.payload; // Ensure the payload contains the error
       });
   },
 });
