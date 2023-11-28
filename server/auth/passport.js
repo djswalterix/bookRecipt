@@ -3,7 +3,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/users.model"); // Assicurati che il percorso sia corretto
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
-
+const dotenv = require("dotenv");
+dotenv.config();
 passport.use(
   new LocalStrategy(
     { usernameField: "email" },
@@ -47,7 +48,7 @@ passport.deserializeUser(async (id, done) => {
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "your-secret-key", // Sostituisci con la tua chiave segreta per firmare i token JWT
+  secretOrKey: process.env.JWT, // Sostituisci con la tua chiave segreta per firmare i token JWT
 };
 
 passport.use(

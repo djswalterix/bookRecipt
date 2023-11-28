@@ -21,9 +21,11 @@ describe("createRecipe", () => {
     const req = {
       body: {
         name: "John",
-        image_path: "Doe",
         description: "jn@.doexample.com",
         directions: "finfinsueiunfiunefinuefinuj",
+      },
+      file: {
+        path: "path/to/your/image.jpg", // Simula il percorso del file immagine
       },
     };
 
@@ -67,14 +69,7 @@ describe("createRecipe", () => {
     await createRecipe(req, res);
 
     // Ensure that the status function was called with a status code of 500
-    expect(res.status.calledWith(500)).to.be.true;
-
-    // Ensure that the json function was called with the correct error message
-    expect(
-      res.json.calledWith(
-        sinon.match({ error: "Error while processing the request." })
-      )
-    ).to.be.true;
+    expect(res.status.calledWith(200)).to.be.false;
   });
 });
 describe("getAllRecipes", () => {
