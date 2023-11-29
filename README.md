@@ -4,14 +4,14 @@
   <p align="center">
     A web application for creating, sharing, and searching recipes. Built with Node.js, React, and Mysql.
     <br />
-    <a href="https://github.com/your-username/ebook-recipe"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/djswalterix/bookRecipt"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://example.com">View Demo</a>
+    <a href="https://ricettariosmart.netlify.app/">View Demo</a>
     ·
-    <a href="https://github.com/your-username/ebook-recipe/issues">Report Bug</a>
+    <a href="https://github.com/djswalterix/bookRecipt/issues">Report Bug</a>
     ·
-    <a href="https://github.com/your-username/ebook-recipe/issues">Request Feature</a>
+    <a href="https://github.com/djswalterix/bookRecipt/issues">Request Feature</a>
   </p>
 </div>
 
@@ -90,7 +90,7 @@ To get started with _bookRecipt_, follow these simple steps:
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/ebook-recipe.git
+   git clone https://github.com/djswalterix/bookRecipt.git
    ```
 2. Navigate to the project directory
    ```
