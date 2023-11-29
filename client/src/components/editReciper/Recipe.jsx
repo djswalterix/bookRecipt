@@ -399,7 +399,7 @@ const RecipeEditForm = ({ ricetta }) => {
                 ingredient.calories !== undefined &&
                 ingredient.calories !== null
                   ? ingredient.calories.toString()
-                  : ""
+                  : "0"
               }
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -420,7 +420,7 @@ const RecipeEditForm = ({ ricetta }) => {
               value={
                 ingredient.fat !== undefined && ingredient.fat !== null
                   ? ingredient.fat.toString()
-                  : ""
+                  : "0"
               }
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -442,7 +442,7 @@ const RecipeEditForm = ({ ricetta }) => {
                 ingredient.carbohydrates !== undefined &&
                 ingredient.carbohydrates !== null
                   ? ingredient.carbohydrates.toString()
-                  : ""
+                  : "0"
               }
               onChange={(e) =>
                 handleIngredientChange(index, {
@@ -463,7 +463,7 @@ const RecipeEditForm = ({ ricetta }) => {
               value={
                 ingredient.protein !== undefined && ingredient.protein !== null
                   ? ingredient.protein.toString()
-                  : ""
+                  : "0"
               }
               onChange={(e) =>
                 handleIngredientChange(index, {
