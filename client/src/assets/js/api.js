@@ -1,8 +1,7 @@
 import axios from "axios";
-const dotenv = require("dotenv");
-dotenv.config();
+
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: "https://book-receipt-1.lm.r.appspot.com/",
   //baseURL: "http://localhost:3000",
 });
 /*
