@@ -268,19 +268,19 @@ const RecipeEditForm = ({ ricetta }) => {
         ? ricetta.Ingredients.map((ing) => ({
             id: ing?.id || "",
             name: ing?.name || "",
-            calories: ing?.calories || "",
-            fat: ing?.fat || "",
-            carbohydrates: ing?.carbohydrates || "",
-            protein: ing?.protein || "",
+            calories: ing?.calories || "0",
+            fat: ing?.fat || "0",
+            carbohydrates: ing?.carbohydrates || "0",
+            protein: ing?.protein || "0",
             quantity: ing?.RecipeIngredient?.quantity || "",
           }))
         : [
             {
               name: "",
-              calories: "",
-              fat: "",
-              carbohydrates: "",
-              protein: "",
+              calories: "0",
+              fat: "0",
+              carbohydrates: "0",
+              protein: "0",
               quantity: "",
             },
           ];
