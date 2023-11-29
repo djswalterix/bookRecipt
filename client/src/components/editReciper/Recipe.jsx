@@ -32,6 +32,7 @@ const RecipeEditForm = ({ ricetta }) => {
     directions: ricetta?.directions || "",
     ingredients: ricetta?.ingredients || [
       {
+        id: "",
         name: "",
         calories: "",
         fat: "",
@@ -107,6 +108,7 @@ const RecipeEditForm = ({ ricetta }) => {
       ingredients: [
         ...formData.ingredients,
         {
+          id: "",
           name: "",
           calories: "",
           fat: "",
@@ -264,6 +266,7 @@ const RecipeEditForm = ({ ricetta }) => {
       // Map the ingredients if ricetta.Ingredients is an array, otherwise use a default structure
       const mappedIngredients = Array.isArray(ricetta?.Ingredients)
         ? ricetta.Ingredients.map((ing) => ({
+            id: ing?.id || "",
             name: ing?.name || "",
             calories: ing?.calories || "",
             fat: ing?.fat || "",
@@ -393,7 +396,8 @@ const RecipeEditForm = ({ ricetta }) => {
                 "Le calorie sono obbligatorie"
               }
               value={
-                ingredient.calories || ingredient.calories === 0
+                ingredient.calories !== undefined &&
+                ingredient.calories !== null
                   ? ingredient.calories.toString()
                   : ""
               }
@@ -414,7 +418,7 @@ const RecipeEditForm = ({ ricetta }) => {
                 "I grassi sono obbligatori"
               }
               value={
-                ingredient.fat || ingredient.fat === 0
+                ingredient.fat !== undefined && ingredient.fat !== null
                   ? ingredient.fat.toString()
                   : ""
               }
@@ -435,7 +439,8 @@ const RecipeEditForm = ({ ricetta }) => {
                 "I carboidrati sono obbligatori"
               }
               value={
-                ingredient.carbohydrates || ingredient.carbohydrates === 0
+                ingredient.carbohydrates !== undefined &&
+                ingredient.carbohydrates !== null
                   ? ingredient.carbohydrates.toString()
                   : ""
               }
@@ -456,7 +461,7 @@ const RecipeEditForm = ({ ricetta }) => {
                 "Le proteine sono obbligatorie"
               }
               value={
-                ingredient.protein || ingredient.protein === 0
+                ingredient.protein !== undefined && ingredient.protein !== null
                   ? ingredient.protein.toString()
                   : ""
               }
