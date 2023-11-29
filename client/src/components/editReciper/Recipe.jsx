@@ -444,12 +444,19 @@ const RecipeEditForm = ({ ricetta }) => {
                   ? ingredient.carbohydrates.toString()
                   : "0"
               }
+              /*
               onChange={(e) =>
                 handleIngredientChange(index, {
                   ...ingredient,
                   carbohydrates: e.target.value,
                 })
-              }
+              }*/ onChange={(e) => {
+                const value = e.target.value;
+                handleIngredientChange(index, {
+                  ...ingredient,
+                  carbohydrates: value === "" ? null : Number(value),
+                });
+              }}
               sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}
             />
             <TextField
