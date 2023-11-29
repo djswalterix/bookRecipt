@@ -392,7 +392,11 @@ const RecipeEditForm = ({ ricetta }) => {
                 formErrors.ingredients[index]?.calories &&
                 "Le calorie sono obbligatorie"
               }
-              value={ingredient.calories || ""}
+              value={
+                ingredient.calories || ingredient.calories === 0
+                  ? ingredient.calories.toString()
+                  : ""
+              }
               onChange={(e) =>
                 handleIngredientChange(index, {
                   ...ingredient,
@@ -409,7 +413,11 @@ const RecipeEditForm = ({ ricetta }) => {
                 formErrors.ingredients[index]?.fat &&
                 "I grassi sono obbligatori"
               }
-              value={ingredient.fat || ""}
+              value={
+                ingredient.fat || ingredient.fat === 0
+                  ? ingredient.fat.toString()
+                  : ""
+              }
               onChange={(e) =>
                 handleIngredientChange(index, {
                   ...ingredient,
@@ -426,7 +434,11 @@ const RecipeEditForm = ({ ricetta }) => {
                 formErrors.ingredients[index]?.carbohydrates &&
                 "I carboidrati sono obbligatori"
               }
-              value={ingredient.carbohydrates || ""}
+              value={
+                ingredient.carbohydrates || ingredient.carbohydrates === 0
+                  ? ingredient.carbohydrates.toString()
+                  : ""
+              }
               onChange={(e) =>
                 handleIngredientChange(index, {
                   ...ingredient,
@@ -443,7 +455,11 @@ const RecipeEditForm = ({ ricetta }) => {
                 formErrors.ingredients[index]?.protein &&
                 "Le proteine sono obbligatorie"
               }
-              value={ingredient.protein || ""}
+              value={
+                ingredient.protein || ingredient.protein === 0
+                  ? ingredient.protein.toString()
+                  : ""
+              }
               onChange={(e) =>
                 handleIngredientChange(index, {
                   ...ingredient,
@@ -452,6 +468,7 @@ const RecipeEditForm = ({ ricetta }) => {
               }
               sx={{ mr: 1, margin: isMobile ? "1vh" : "auto" }}
             />
+
             <TextField
               label="Quantità"
               name="quantity"
