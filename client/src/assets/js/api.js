@@ -1,5 +1,6 @@
 import axios from "axios";
-
+const dotenv = require("dotenv");
+dotenv.config();
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   //baseURL: "http://localhost:3000",
