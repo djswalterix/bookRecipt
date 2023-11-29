@@ -43,11 +43,11 @@
   </ol>
 </details>
 
-<!-- ABOUT THE PROJECT -->
+<!--  THE PROJECT -->
 
-## About The Project
+##  The Project
 
-![Screenshot](/public/images/Screenshot.png)
+![Screenshot](/client/public/images/Screenshot.png)
 
 _bookRecipt_ is a web application that allows users to create, share, and search for recipes. Whether you want to discover new dishes or contribute your culinary creations, this platform provides a seamless experience.
 
